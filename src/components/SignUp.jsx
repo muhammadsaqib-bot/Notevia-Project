@@ -1,9 +1,74 @@
+import { useState } from 'react';
 import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import bg from '../assets/bg.PNG';
+import axios from 'axios';
+
+const API_BASE_URL = 'https://new-my-journals.vercel.app/';
 
 const SignUp = () => {
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);
+
+    function handleChange(e) {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    }
+
+    async function SignUpSubmitted(e) {
+        e.preventDefault();
+        setError(null);
+        setMessage(null);
+
+        if (formData.password !== formData.confirmPassword) {
+            return setError("Passwords do not match");
+        }
+
+        try {
+            setLoading(true);
+
+            const response = await axios.post(
+                `${API_BASE_URL}auth/register`,
+                {
+                    name: formData.fullName,
+                    email: formData.email,
+                    passwordHash: formData.password,
+                }
+            );
+
+            setMessage("Account created successfully 🎉");
+
+            // Save token if backend returns one
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+            }
+
+            setTimeout(() => {
+                navigate('/VerifyEmail', { state: { email: formData.email } });
+            }, 1500);
+
+        } catch (err) {
+            setError(
+                err.response?.data?.message || "Something went wrong"
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div
             className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
@@ -15,95 +80,100 @@ const SignUp = () => {
                 backgroundAttachment: 'fixed',
             }}
         >
-            {/* Mirrored background for large screens */}
-            <div
-                className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
-                style={{
-                    backgroundImage: `url(${bg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transform: 'rotate(180deg)',
-                }}
-            ></div>
+            <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
 
-            <div className="flex flex-col gap-6 sm:gap-10 relative z-10 w-full max-w-md px-4">
-                {/* Logo */}
                 <div className="flex justify-center items-center gap-2">
-                    <img src={logo} alt="Logo" className="w-9 h-9 sm:w-10 sm:h-10" />
-                    <h3 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
+                    <img src={logo} alt="Logo" className="w-10 h-10" />
+                    <h3 className="text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
-                {/* Form */}
-                <form className="rounded-2xl bg-white w-full p-6 sm:p-10">
-                    <h2 className="text-center text-2xl sm:text-3xl font-bold text-[#1B2559]">
+                <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-full p-8">
+                    <h2 className="text-center text-3xl font-bold text-[#1B2559]">
                         Create Account
                     </h2>
-                    <p className="text-center text-sm sm:text-base leading-6 sm:leading-7 font-medium text-gray-500 mt-2">
-                        Start your journaling journey
-                    </p>
 
-                    {/* Full Name */}
+                    {error && (
+                        <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {message && (
+                        <div className="bg-green-100 text-green-600 p-2 rounded mt-4 text-sm">
+                            {message}
+                        </div>
+                    )}
+
                     <label className="block mt-4">
-                        <p className="text-sm sm:text-base font-normal mb-1">Full Name</p>
+                        <p className="mb-1">Full Name</p>
                         <input
                             type="text"
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            required
+                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
-                    {/* Email */}
                     <label className="block mt-4">
-                        <p className="text-sm sm:text-base font-normal mb-1">Email</p>
+                        <p className="mb-1">Email</p>
                         <input
                             type="email"
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
-                    {/* Password */}
                     <label className="block mt-4">
-                        <p className="text-sm sm:text-base font-normal mb-1">Password</p>
+                        <p className="mb-1">Password</p>
                         <input
                             type="password"
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
-                    {/* Confirm Password */}
                     <label className="block mt-4">
-                        <p className="text-sm sm:text-base font-normal mb-1">Confirm Password</p>
+                        <p className="mb-1">Confirm Password</p>
                         <input
                             type="password"
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            required
+                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
-                    {/* Submit */}
                     <button
                         type="submit"
-                        className="w-full h-10 sm:h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-6 sm:mt-8"
+                        disabled={loading}
+                        className="w-full h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-8 disabled:opacity-50"
                     >
-                        Create account
+                        {loading ? "Creating..." : "Create account"}
                     </button>
 
-                    {/* Login link */}
-                    <p className="text-center text-xs sm:text-sm font-normal mt-3 text-[#A3AED0]">
+                    <p className="text-center text-sm mt-3 text-[#A3AED0]">
                         Already have an account?{' '}
-                        <Link to={'/'} className="text-[#4318FF] font-semibold">Sign In</Link>
+                        <Link to={'/'} className="text-[#4318FF] font-semibold">
+                            Sign In
+                        </Link>
                     </p>
                 </form>
             </div>
 
-            {/* Mountains image */}
             <img
                 src={mountainsImg}
                 alt="Mountains"
-                className="fixed bottom-5 sm:bottom-20 right-5 sm:right-20 w-1/3 sm:w-1/5 h-auto pointer-events-none"
+                className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
             />
-            <div className='p-3 rounded text-white absolute right-2 top-2 bg-gray-800'>
-                <p className='font-medium'>{msg}</p>
-            </div>
-
         </div>
     );
 };

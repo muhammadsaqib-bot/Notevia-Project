@@ -1,87 +1,141 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import mountainsImg from '../assets/Group.png';
 import logo from '../assets/Neografica.png';
 import bg from '../assets/bg.png';
-import { useState } from 'react';
-import axios from 'axios';
 import Toaster from '../components/Toaster';
 
+const API_BASE_URL = 'https://new-my-journals.vercel.app/';
+
 const SignIn = () => {
-    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
-    let [email, setEmail] = useState('')
-    let [password, setPassword] = useState('')
+    const navigate = useNavigate();
 
-    // Toaster state
-    const [toastMsg, setToastMsg] = useState('')
-    const [toastOpen, setToastOpen] = useState(false)
-    const navigate = useNavigate()
+    // Login form state
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    // If already authenticated, redirect to dashboard
+    // UI state
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [toastMsg, setToastMsg] = useState('');
+    const [toastOpen, setToastOpen] = useState(false);
+
+    // Forgot password modal state
+    const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+    const [step, setStep] = useState(1); // 1 = enter email, 2 = reset password
+    const [resetEmail, setResetEmail] = useState('');
+    const [otp, setOtp] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [resetError, setResetError] = useState('');
+    const [resetLoading, setResetLoading] = useState(false);
+
+    // Redirect if already logged in
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token) {
-            navigate('/Dashboard1', { replace: true })
-        }
-    }, [navigate])
+        const token = localStorage.getItem('token');
+        if (token) navigate('/Dashboard1', { replace: true });
+    }, [navigate]);
 
-    // Helper to (re)show toaster and restart its timer
+    // Show toast
     const showToast = (msg) => {
-        setToastMsg(msg || '')
-        // Toggle visibility to restart Toaster timer if it's already open
-        setToastOpen(false)
-        setTimeout(() => setToastOpen(true), 0)
-    }
+        setToastMsg(msg);
+        setToastOpen(true);
+        setTimeout(() => setToastOpen(false), 2000);
+    };
 
-    const FormSubmitted = async (e) => {
-        e.preventDefault()
-        if (!email.trim() || !password.trim()) {
+    // Login submit
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!email || !password) {
+            setError("Please fill all fields");
             return;
         }
-        axios.post(`${API_BASE_URL}auth/login`, { email, password })
-            .then(response => {
-                console.log(response);
 
-                const res = response?.data || {}
-                const success = !!res?.success
-                const message = res?.message
-                // Show toaster only with backend-provided message
-                if (typeof message === 'string' && message.trim()) {
-                    showToast(message)
-                }
-                if (success) {
-                    setEmail('')
-                    setPassword('')
-                    if (response?.data?.token) {
-                        localStorage.setItem('token', response.data.token)
-                    }
-                    navigate('/Dashboard1')
-                }
-                console.log(response);
+        try {
+            setLoading(true);
+            const response = await axios.post(`${API_BASE_URL}auth/login`, { email, password });
+            const res = response.data;
+            if (res.success) {
+                if (res.token) localStorage.setItem('token', res.token);
 
-            })
+                // 👇 NAME SAVE KARO
 
+                const userName = res.user.name;
 
-            .catch(error => {
-                const message = error?.response?.data?.message
-                // Show toaster only with backend-provided error message
-                if (typeof message === 'string' && message.trim()) {
-                    showToast(message)
-                }
-                console.log(error);
+                navigate("/Dashboard1", {
+                    state: { name: userName }
+                });
 
+                if (res.token) localStorage.setItem('token', res.token);
+                showToast(res.message || "Login successful 🎉");
+                // navigate("/Dashboard1", {
+                //     state: { name: "Muhammad Saqib" }
+                // });
+            } else if (res.message === "Please verify your account first") {
+                showToast(res.message);
+                setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
+            } else {
+                setError(res.message || "Login failed");
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Something went wrong";
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle sending OTP (Step 1)
+    const sendOtp = async () => {
+        if (!resetEmail) {
+            setResetError("Please enter your email");
+            return;
+        }
+        try {
+            setResetLoading(true);
+            await axios.post(`${API_BASE_URL}auth/forgot-password`, { email: resetEmail });
+            showToast("OTP sent to your email ✅");
+            setStep(2);
+            setResetError('');
+        } catch (err) {
+            setResetError(err.response?.data?.message || "Something went wrong");
+        } finally {
+            setResetLoading(false);
+        }
+    };
+
+    // Handle password reset (Step 2)
+    const resetPassword = async () => {
+        if (!otp || !newPassword) {
+            setResetError("Please fill all fields");
+            return;
+        }
+        try {
+            setResetLoading(true);
+            await axios.post(`${API_BASE_URL}auth/reset-password`, {
+                email: resetEmail,
+                otp,
+                newPassword
             });
-    }
+            showToast("Password changed successfully ✅");
+            setForgotPasswordOpen(false);
+            setStep(1);
+            setOtp('');
+            setNewPassword('');
+            setResetEmail('');
+        } catch (err) {
+            setResetError(err.response?.data?.message || "Something went wrong");
+        } finally {
+            setResetLoading(false);
+        }
+    };
 
     return (
         <>
-            {toastOpen && (
-                <Toaster
-                    message={toastMsg}
-                    visible={toastOpen}
-                    onClose={() => setToastOpen(false)}
-                />
-            )}
+            {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
+
             <div
                 className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
                 style={{
@@ -92,97 +146,146 @@ const SignIn = () => {
                     backgroundAttachment: 'fixed',
                 }}
             >
-                {/* Optional mirrored bg on larger screens */}
-                <div
-                    className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
-                    style={{
-                        backgroundImage: `url(${bg})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        transform: 'rotate(180deg)',
-                    }}
-                ></div>
-
-                <div className="flex flex-col gap-6 sm:gap-10 relative z-10 w-full max-w-md px-4">
-                    {/* Logo */}
+                {/* Login form */}
+                <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
                     <div className="flex justify-center items-center gap-2">
-                        <img src={logo} alt="Logo" className="w-9 h-9 sm:w-10 sm:h-10" />
-                        <h3 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
+                        <img src={logo} alt="Logo" className="w-10 h-10" />
+                        <h3 className="text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
                     </div>
 
-                    {/* Form */}
-                    <form onSubmit={FormSubmitted} className="rounded-2xl bg-white w-full p-6 sm:p-10">
-                        <h2 className="text-center text-2xl sm:text-3xl font-bold text-[#1B2559]">
-                            Welcome back
-                        </h2>
-                        <p className="text-center text-sm sm:text-base leading-6 sm:leading-7 font-medium text-gray-500 mt-2">
-                            Sign in to your account
-                        </p>
+                    <form onSubmit={handleLogin} className="rounded-2xl bg-white w-full p-8">
+                        <h2 className="text-center text-3xl font-bold text-[#1B2559]">Welcome back</h2>
 
-                        {/* Email */}
+                        {error && <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">{error}</div>}
+
                         <label className="block mt-4">
-                            <p className="text-sm sm:text-base font-normal mb-1">Email</p>
+                            <p className="mb-1">Email</p>
                             <input
-                                required
                                 type="email"
-                                className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
                                 value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value)
-                                }}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                             />
                         </label>
 
-                        {/* Password */}
                         <label className="block mt-4">
-                            <p className="text-sm sm:text-base font-normal mb-1">Password</p>
+                            <p className="mb-1">Password</p>
                             <input
-                                required
-                                pattern='^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\S+$).{8,20}$'
                                 type="password"
-                                className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-10 sm:h-12 rounded px-2 sm:px-3"
                                 value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value)
-                                }}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                             />
                         </label>
 
-                        {/* Remember & Forgot */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3 gap-2 sm:gap-0">
-                            <div className="flex items-center gap-2">
+                        <div className="flex justify-between mt-2">
+                            <div className="flex gap-2 items-center">
                                 <input type="radio" />
-                                <p className="text-sm sm:text-base font-normal">Remember me</p>
+                                <p>Remember Me</p>
                             </div>
-                            <button className="text-[#4318FF] text-sm sm:text-base font-medium">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setForgotPasswordOpen(true);
+                                    setStep(1);
+                                    setResetEmail(email);
+                                    setResetError('');
+                                    setOtp('');
+                                    setNewPassword('');
+                                }}
+                                className="cursor-pointer text-[#4318FF] font-medium"
+                            >
                                 Forgot Password?
                             </button>
                         </div>
 
-                        {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full h-10 sm:h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-6 sm:mt-8"
+                            disabled={loading}
+                            className="w-full h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-8 disabled:opacity-50"
                         >
-                            Login
+                            {loading ? "Logging in..." : "Login"}
                         </button>
 
-                        <p className="text-center text-xs sm:text-sm font-normal mt-3 text-[#A3AED0]">
+                        <p className="text-center text-sm mt-3 text-[#A3AED0]">
                             Don't have an account?{' '}
-                            {/* <a href="" className="text-[#4318FF] font-semibold">
-                            Sign up
-                        </a> */}
                             <Link to={'SignUp'} className="text-[#4318FF] font-semibold">Sign Up</Link>
                         </p>
                     </form>
                 </div>
 
-                {/* Mountains */}
                 <img
                     src={mountainsImg}
                     alt="Mountains"
-                    className="fixed bottom-5 sm:bottom-20 right-5 sm:right-20 w-1/3 sm:w-1/5 h-auto pointer-events-none"
+                    className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
                 />
+
+                {/* Forgot Password Modal */}
+                {forgotPasswordOpen && (
+                    <div className="fixed inset-0 bg-gray-100 shadow-sm  bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
+                        <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">
+                            <button
+                                onClick={() => setForgotPasswordOpen(false)}
+                                className="absolute top-4 right-4 text-gray-500 font-bold text-xl"
+                            >
+                                &times;
+                            </button>
+
+                            {step === 1 && (
+                                <>
+                                    <h2 className="text-2xl font-bold text-[#1B2559] mb-4 text-center">
+                                        Enter Your Email
+                                    </h2>
+                                    {resetError && <div className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">{resetError}</div>}
+                                    <input
+                                        type="email"
+                                        value={resetEmail}
+                                        onChange={(e) => setResetEmail(e.target.value)}
+                                        className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3 mb-4"
+                                        placeholder="Email"
+                                    />
+                                    <button
+                                        onClick={sendOtp}
+                                        disabled={resetLoading}
+                                        className="w-full h-12 bg-[#4318FF] text-white font-bold rounded-3xl disabled:opacity-50"
+                                    >
+                                        {resetLoading ? "Sending..." : "Send OTP"}
+                                    </button>
+                                </>
+                            )}
+
+                            {step === 2 && (
+                                <>
+                                    <h2 className="text-2xl font-bold text-[#1B2559] mb-4 text-center">
+                                        Reset Password
+                                    </h2>
+                                    {resetError && <div className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">{resetError}</div>}
+                                    <input
+                                        type="text"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3 mb-4"
+                                        placeholder="OTP"
+                                    />
+                                    <input
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3 mb-4"
+                                        placeholder="New Password"
+                                    />
+                                    <button
+                                        onClick={resetPassword}
+                                        disabled={resetLoading}
+                                        className="w-full h-12 bg-[#4318FF] text-white font-bold rounded-3xl disabled:opacity-50"
+                                    >
+                                        {resetLoading ? "Resetting..." : "Reset Password"}
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

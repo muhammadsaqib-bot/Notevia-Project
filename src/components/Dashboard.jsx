@@ -16,7 +16,20 @@ import plus from '../assets/plus.PNG';
 import del from '../assets/delete.PNG';
 import write from '../assets/write.PNG';
 import eye from '../assets/eye.PNG';
+import { useLocation, useNavigate, } from "react-router-dom";
+import { useEffect } from "react";
 const Dashboard = () => {
+
+
+
+    const location = useLocation();
+
+    const name =
+        location.state?.name ||
+        "Guest";
+    console.log(name);
+
+
 
     return (
         <div className="w-screen h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
@@ -31,7 +44,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Menu */}
-                <div className="flex flex-col gap-2 md:gap-4 text-[#A3AED0] text-sm">
+                <div className="flex flex-col gap-2 md:gap-4 text-[#A3AED0] text-sm ">
 
                     <div className="flex flex-col gap-2 md:gap-3 text-[#A3AED0] text-sm">
                         <div className="flex items-center gap-3 bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white px-3 md:px-4 py-2 md:py-3 rounded cursor-pointer">
@@ -65,7 +78,7 @@ const Dashboard = () => {
                 {/* Top Bar */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8">
                     <div>
-                        <p className="text-sm text-[#A3AED0]">Hi Saqib,</p>
+                        <p className="text-sm text-[#A3AED0]">Hi {name},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">
                             Welcome to Notevia!
                         </h1>
