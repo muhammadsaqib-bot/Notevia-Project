@@ -6,7 +6,6 @@ import profileIcon from "../assets/profileIcon.PNG";
 import settingsIcon from "../assets/settingIcon.PNG";
 import search from '../assets/Search Icon.PNG';
 import user from '../assets/user.PNG';
-import vector from '../assets/vector.PNG';
 import calendar from '../assets/calendar.PNG';
 import tabler from '../assets/tabler.PNG';
 import graph from '../assets/Graph.PNG';
@@ -98,7 +97,7 @@ const Dashboard = () => {
                     {[{
                         title: 'Total Journals',
                         value: '128',
-                        icon: vector,
+                        icon: dashboard1,
                         bg: 'from-[#868CFF] to-[#4318FF]',
                         graph: graph,
                     }, {

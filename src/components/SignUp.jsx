@@ -81,16 +81,17 @@ const SignUp = () => {
             }}
         >
             <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
-
-                <div className="flex justify-center items-center gap-2">
+                <div className="pl-20 flex justify-center items-center gap-2 ">
                     <img src={logo} alt="Logo" className="w-10 h-10" />
-                    <h3 className="text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
+                    <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
-                <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-full p-8">
-                    <h2 className="text-center text-3xl font-bold text-[#1B2559]">
+                <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-[502px] p-8">
+                    <h2 className="text-center text-[34px] font-[700] text-[#1B2559]">
                         Create Account
                     </h2>
+                    <p className='text-[#A3AED0] text-center font-[500] text-[16px]'>Start your jaournling journey</p>
+
 
                     {error && (
                         <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">
@@ -105,7 +106,7 @@ const SignUp = () => {
                     )}
 
                     <label className="block mt-4">
-                        <p className="mb-1">Full Name</p>
+                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px] ">Full Name</p>
                         <input
                             type="text"
                             name="fullName"
@@ -117,7 +118,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="mb-1">Email</p>
+                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Email</p>
                         <input
                             type="email"
                             name="email"
@@ -129,7 +130,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="mb-1">Password</p>
+                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Password</p>
                         <input
                             type="password"
                             name="password"
@@ -141,7 +142,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="mb-1">Confirm Password</p>
+                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Confirm Password</p>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -155,14 +156,14 @@ const SignUp = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-8 disabled:opacity-50"
+                        className="w-full h-12 text-[16px] bg-[#4318FF] rounded-3xl font-[700] text-white mt-8 disabled:opacity-50"
                     >
                         {loading ? "Creating..." : "Create account"}
                     </button>
 
-                    <p className="text-center text-sm mt-3 text-[#A3AED0]">
+                    <p className="text-center text-[14px] mt-3 text-[#A3AED0] font-[600]">
                         Already have an account?{' '}
-                        <Link to={'/'} className="text-[#4318FF] font-semibold">
+                        <Link to='/SignIn' className="text-[#4318FF] font-[600] text-[14px]">
                             Sign In
                         </Link>
                     </p>
@@ -177,5 +178,4 @@ const SignUp = () => {
         </div>
     );
 };
-
 export default SignUp;

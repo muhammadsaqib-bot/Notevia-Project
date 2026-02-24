@@ -31,9 +31,11 @@ const App = () => {
   return (
 
     <Routes>
-      <Route path="/" element={<NoteviApp />} />
+      <Route path="/" element={<SignUp />} />
       <Route path="/SignIn" element={<SignIn />} />
-      <Route path="/SignUp" element={<SignUp />} />
+      <Route path="/intro" element={
+        <ProtectedRoute>
+          <NoteviApp /></ProtectedRoute>} />
 
       {/* Only accessible if redirected from login */}
       <Route
