@@ -2,9 +2,18 @@ import { useState } from "react";
 import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
 import bg from '../assets/bg.PNG';
+import axios from "axios";
+import Toaster from "../components/Toaster";
+import { useNavigate } from "react-router-dom";
 
 const CreatPin = () => {
+    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
     const [pin, setPin] = useState(["", "", "", ""]);
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
+    const [toastMsg, setToastMsg] = useState("");
+    const [toastOpen, setToastOpen] = useState(false);
+    let num;
 
     const handleChange = (value, index) => {
         if (!/^[0-9]?$/.test(value)) return;
@@ -13,6 +22,50 @@ const CreatPin = () => {
         setPin(newPin);
     };
 
+    const showToast = (msg) => {
+        setToastMsg(msg);
+        setToastOpen(true);
+        setTimeout(() => setToastOpen(false), 2000);
+    };
+
+    const SubmitHandle = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        if (pin.some((item) => !item)) {
+            setError("Your Fields are Empty");
+            return;
+        }
+
+        const num = pin.join("");
+
+        try {
+            const { data } = await axios.post(
+                `${API_BASE_URL}pin/create`,
+                { pin: num },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.token}`
+                    }
+                }
+            );
+
+            if (data) {
+                if (data.accessToken) localStorage.setItem("token", data.accessToken);
+                showToast(data.message || "PIN created successfully!");
+                setTimeout(() => navigate('/Notevia'), 1500)
+            }
+
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+            const message = err.response?.data?.message;
+            if (message === "PIN already exists for this user") {
+                return navigate('/Notevia');
+            }
+            setError(err.response?.data?.message || "Something went wrong");
+        }
+    };
     return (
         <div
             className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
@@ -24,7 +77,12 @@ const CreatPin = () => {
                 backgroundAttachment: 'fixed',
             }}
         >
+            {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
+
             {/* Mirrored background for large screens */}
+
+
+
             <div
                 className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
                 style={{
@@ -43,7 +101,7 @@ const CreatPin = () => {
                 </div>
 
                 {/* Form */}
-                <form className="rounded-3xl bg-white w-full p-6 sm:p-10 shadow-sm">
+                <form onSubmit={SubmitHandle} className="rounded-3xl bg-white w-full p-6 sm:p-10 shadow-sm">
                     <h2 className="text-center text-2xl sm:text-3xl font-bold text-[#1B2559]">
                         Create a PIN
                     </h2>
@@ -51,6 +109,12 @@ const CreatPin = () => {
                     <p className="text-center text-sm sm:text-base mt-2 text-[#A3AED0]">
                         This will be used to secure your Journal
                     </p>
+                    {/* Error Message */}
+                    {error && (
+                        <div className="bg-red-100 text-red-600 p-4 rounded mt-4 text-sm">
+                            {error}
+                        </div>
+                    )}
 
                     <div className="bg-[#F4F7FE] rounded-xl p-3 sm:p-4 mt-6">
                         <p className="text-center text-xs sm:text-sm text-[#A3AED0]">

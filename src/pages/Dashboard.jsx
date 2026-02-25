@@ -16,74 +16,80 @@ import del from '../assets/delete.PNG';
 import write from '../assets/write.PNG';
 import eye from '../assets/eye.PNG';
 import { useLocation, useNavigate, } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
 const Dashboard = () => {
-
-
-
-    const location = useLocation();
-
-    const name =
-        location.state?.name ||
-        "Guest";
-    console.log(name);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
 
     return (
-        <div className="w-screen h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
+        <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
 
             {/* Sidebar */}
-            <div className="h-screen w-full md:w-64 bg-white p-4 md:p-6 flex flex-col shrink-0">
-
-                {/* Logo */}
-                <div className="flex items-center gap-2 mb-6 md:mb-10">
-                    <img src={noteviaLogo} alt="Logo" className="w-8 h-8 object-contain" />
-                    <h2 className="text-xl font-bold text-[#1B2559]">NOTEVIA</h2>
-                </div>
-
-                {/* Menu */}
-                <div className="flex flex-col gap-2 md:gap-4 text-[#A3AED0] text-sm ">
-
-                    <div className="flex flex-col gap-2 md:gap-3 text-[#A3AED0] text-sm">
-                        <div className="flex items-center gap-3 bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white px-3 md:px-4 py-2 md:py-3 rounded cursor-pointer">
-                            <img src={dashboard1} alt="dashboard" className="w-5 h-5 object-contain" />
-                            Dashboard
-                        </div>
-                        <div className="flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 hover:bg-[#F4F7FE] rounded cursor-pointer">
-                            <img src={journalIcon} alt="journals" className="w-5 h-5 object-contain" />
-                            Journals
-                        </div>
-                        <div className="flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 hover:bg-[#F4F7FE] rounded cursor-pointer">
-                            <img src={penIcon} alt="add journal" className="w-5 h-5 object-contain" />
-                            Add Journal
-                        </div>
-                        <div className="flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 hover:bg-[#F4F7FE] rounded cursor-pointer">
-                            <img src={profileIcon} alt="profile" className="w-5 h-5 object-contain" />
-                            Profile
-                        </div>
-                        <div className="flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 hover:bg-[#F4F7FE] rounded cursor-pointer">
-                            <img src={settingsIcon} alt="settings" className="w-5 h-5 object-contain" />
-                            Settings
-                        </div>
+            <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
+                <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
+                    <div className="flex items-center gap-2">
+                        <img src={noteviaLogo} alt="" />
+                        <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
                     </div>
 
+                    {/* Hamburger Icon for Mobile */}
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="md:hidden p-2 text-[#1B2559]"
+                    >
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {isMenuOpen
+                                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            }
+                        </svg>
+                    </button>
+                </div>
+
+                <div className='rounded cursor-pointer h-[45px] w-90% bg-[#4318FF] flex pl-10 mb-5'>
+                    <div className='flex items-center gap-3 '>
+                        <img className='h-[16px] w-[16px]' src={dashboard1} alt="" />
+                        <p className='text-[#FFF] font-[500] text-[16px] leading-[28px]'>Dashboard</p>
+                    </div>
+                </div>
+
+                <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+                    <div className='flex items-center gap-3'>
+                        <img className='h-[20px] w-[17px]' src={journalIcon} alt="" />
+                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</p>
+                    </div>
+                </div>
+
+                <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+                    <div className='flex items-center gap-3'>
+                        <img className='h-[20px]' src={penIcon} alt="" />
+                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</p>
+                    </div>
+                </div>
+
+                <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+                    <div className='flex items-center gap-3'>
+                        <img className='h-[20px]' src={profileIcon} alt="" />
+                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Profile</p>
+                    </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
 
                 {/* Top Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 md:mb-8">
                     <div>
-                        <p className="text-sm text-[#A3AED0]">Hi {name},</p>
+                        <p className="text-sm text-[#A3AED0]">Hi Saqib,</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">
                             Welcome to Notevia!
                         </h1>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mt-4 lg:mt-0 w-full lg:w-auto">
                         <div className="bg-white px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm w-full sm:w-auto">
                             <img src={search} alt="" className="w-4 h-4 object-contain" />
                             <input placeholder="Search" className="outline-none text-sm w-full sm:w-[240px] h-[36px]" />
@@ -93,7 +99,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="flex flex-wrap gap-4 md:gap-10 mb-6 md:mb-8">
+                <div className="flex flex-wrap gap-4 md:gap-6 lg:gap-10 mb-6 md:mb-8">
                     {[{
                         title: 'Total Journals',
                         value: '128',
@@ -122,11 +128,11 @@ const Dashboard = () => {
                     }].map((card, i) => (
                         <div
                             key={i}
-                            className={`flex-1 min-w-[180px] p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm 
+                            className={`w-full min-[850px]:flex-1 min-w-[180px] p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm 
                                 ${card.textWhite ? `bg-gradient-to-r ${card.bg} text-white` : 'bg-white'}`}
                         >
                             <div className="flex gap-3 md:gap-5 items-center">
-                                <div className={`rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center ${card.bg.startsWith('bg') ? card.bg : `bg-gradient-to-r ${card.bg}`}`}>
+                                <div className={`shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center ${card.bg.startsWith('bg') ? card.bg : `bg-gradient-to-r ${card.bg}`}`}>
                                     <img src={card.icon} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
                                 </div>
                                 <div>
@@ -134,7 +140,7 @@ const Dashboard = () => {
                                     <h3 className={`text-lg md:text-xl font-bold ${card.textWhite ? 'text-white' : 'text-[#1B2559]'}`}>{card.value}</h3>
                                 </div>
                             </div>
-                            {card.graph && <img src={card.graph} alt="" className="hidden md:block" />}
+                            {card.graph && <img src={card.graph} alt="" className="hidden min-[850px]:block" />}
                         </div>
                     ))}
                 </div>
@@ -166,6 +172,7 @@ const Dashboard = () => {
                                         Calm
                                     </div>
                                 </div>
+
                                 <p className="text-sm text-[#A3AED0] mb-2">
                                     "Today I finally completed the dashboard design..."
                                 </p>

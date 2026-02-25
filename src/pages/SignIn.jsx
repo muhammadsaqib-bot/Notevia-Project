@@ -5,6 +5,7 @@ import mountainsImg from '../assets/Group.png';
 import logo from '../assets/Neografica.png';
 import bg from '../assets/bg.png';
 import Toaster from '../components/Toaster';
+import Notevia from './Notevia';
 
 const API_BASE_URL = 'https://new-my-journals.vercel.app/';
 
@@ -33,7 +34,7 @@ const SignIn = () => {
     // Redirect if already logged in
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) navigate('/Dashboard1', { replace: true });
+        if (token) navigate('/Notevia', { replace: true });
     }, [navigate]);
 
     // Show toast
@@ -57,6 +58,8 @@ const SignIn = () => {
             setLoading(true);
             const response = await axios.post(`${API_BASE_URL}auth/login`, { email, password });
             const res = response.data;
+            console.log(res);
+
             if (res.success) {
                 if (res.token) localStorage.setItem('token', res.token);
 
@@ -64,9 +67,7 @@ const SignIn = () => {
 
                 const userName = res.user.name;
 
-                navigate("/Dashboard1", {
-                    state: { name: userName }
-                });
+
 
                 if (res.token) localStorage.setItem('token', res.token);
                 showToast(res.message || "Login successful 🎉");

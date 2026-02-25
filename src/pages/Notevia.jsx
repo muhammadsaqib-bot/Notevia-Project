@@ -7,40 +7,62 @@ import edit from '../assets/bluePen.PNG'
 import remove from '../assets/basket.PNG'
 import emoji from '../assets/emoji.PNG'
 import copy from '../assets/copy.PNG'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import { useState } from 'react'
 
 const NoteviApp = () => {
+  const API_BASE_URL = 'https://new-my-journals.vercel.app/';
+  let [name, setName] = useState("");
+
+  useEffect(() => {
+    const Profile = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}profiles/me`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.token}`
+          }
+        })
+        setName(res.data.full_name)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    Profile()
+  }, [])
+
   return (
     <div className='w-screen min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row'>
 
       {/* Sidebar */}
       <div className='w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[10px] shadow-sm shrink-0'>
-        <div className='flex gap-2 mt-6 md:mt-[55px] mb-5 items-center justify-center w-full h-[45px] rounded-[5px] border-b border-[#E6EDFF] pb-10'>
+        <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-center w-full h-[45px] rounded-[5px] border-b border-[#E6EDFF] pb-10'>
           <img src={logo} alt="" />
           <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
         </div>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[16px] w-[16px]' src={dashboard} alt="" />
             <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Dashboard</p>
           </div>
         </div>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px] w-[17px]' src={journal} alt="" />
             <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</p>
           </div>
         </div>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px]' src={pen} alt="" />
             <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</p>
           </div>
         </div>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-10 mb-5'>
+        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px]' src={profile} alt="" />
             <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Profile</p>
@@ -52,7 +74,7 @@ const NoteviApp = () => {
       <div className='md:ml-[290px] flex-1 p-4 md:p-8 overflow-x-hidden'>
 
         {/* Greeting */}
-        <p className='text-[#707EAE] text-[14px] font-[700] leading-[24px] '>Hi Zeeshan,</p>
+        <p className='text-[#707EAE] text-[14px] font-[700] leading-[24px] '>Hi {name},</p>
         <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-[700] mb-6 md:mb-8'>Welcome to Notevia!</h1>
 
         {/* Journal Card */}

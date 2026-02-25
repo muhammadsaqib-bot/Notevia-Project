@@ -1,21 +1,20 @@
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 
-import SignUp from './components/SignUp'
-import SignIn from './components/SignIn'
-import Dashboard from './components/Dashboard'
-import NotFound from './components/NotFound'
-import VerifyEmail from './components/VerifyEmail.jsx';
-import NoteviApp from './components/Notevia.jsx'
+import SignUp from './pages/SignUp.jsx'
+import SignIn from './pages/SignIn.jsx'
+import Dashboard from './pages/Dashboard.jsx'
+import NotFound from './pages/NotFound.jsx'
+import VerifyEmail from './pages/VerifyEmail.jsx';
+import NoteviApp from './pages/Notevia.jsx'
+import CreatPin from './pages/CreatPin.jsx'
 
-// ProtectedRoute → dashboard ke liye
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token')
   if (!token) return <NotFound />
   return children
 }
 
-// Only allow VerifyEmail if email state is present
 const VerifyEmailRoute = ({ children }) => {
   const { state } = useLocation()
   if (!state?.email) return <NotFound />
@@ -29,15 +28,17 @@ const DashboardWithProps = () => {
 
 const App = () => {
   return (
-
     <Routes>
       <Route path="/" element={<SignUp />} />
       <Route path="/SignIn" element={<SignIn />} />
-      <Route path="/intro" element={
+      <Route path="/Notevia" element={
         <ProtectedRoute>
           <NoteviApp /></ProtectedRoute>} />
 
-      {/* Only accessible if redirected from login */}
+      <Route path="/CreatePin" element={
+        <ProtectedRoute>
+          <CreatPin /></ProtectedRoute>} />
+
       <Route
         path='/VerifyEmail'
         element={

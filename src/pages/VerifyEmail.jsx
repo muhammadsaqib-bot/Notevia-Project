@@ -66,10 +66,12 @@ const VerifyAccount = () => {
         try {
             setLoading(true)
             const res = await axios.post(`${API_BASE_URL}auth/verify-account`, { email, otp: code })
+            localStorage.setItem("token", res.data.token)
+            console.log("Result: ", res.data.token);
 
-            if (res.data.success) {
+            if (res) {
                 showToast('Account verified successfully 🎉')
-                setTimeout(() => navigate('/'), 1500)
+                setTimeout(() => navigate('/CreatePin'), 1500)
             } else {
                 showToast(res.data.message || 'Invalid OTP')
             }

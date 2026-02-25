@@ -48,9 +48,7 @@ const NotFound = () => {
                 </p>
 
                 {/* Go Home Button */}
-                <button className="cursor-pointer w-full py-3 rounded-[10px] bg-[#4318FF] text-white text-[15px] font-[700] hover:bg-[#3311cc] transition-colors mb-6">
-                    <Link to='/' >Go back Home Page</Link>
-                </button>
+                <Link to='/' className='cursor-pointer w-full py-3 rounded-[10px] bg-[#4318FF] text-white text-[15px] font-[700] hover:bg-[#3311cc] transition-colors mb-6'>Go back Home Page</Link>
 
 
 

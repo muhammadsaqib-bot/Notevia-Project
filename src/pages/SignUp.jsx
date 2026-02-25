@@ -53,7 +53,6 @@ const SignUp = () => {
 
             // Save token if backend returns one
             if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
             }
 
             setTimeout(() => {
@@ -71,7 +70,7 @@ const SignUp = () => {
 
     return (
         <div
-            className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
+            className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
             style={{
                 backgroundImage: `url(${bg})`,
                 backgroundSize: 'cover',
@@ -81,16 +80,16 @@ const SignUp = () => {
             }}
         >
             <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
-                <div className="pl-20 flex justify-center items-center gap-2 ">
+                <div className="max-[750px]:pl-0 pl-20 flex justify-center items-center gap-2 ">
                     <img src={logo} alt="Logo" className="w-10 h-10" />
                     <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
-                <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-[502px] p-8">
-                    <h2 className="text-center text-[34px] font-[700] text-[#1B2559]">
+                <form onSubmit={SignUpSubmitted} className="max-[750px]:max-w-full rounded-2xl bg-white w-[502px] p-8">
+                    <h2 className="max-[750px]:text-[25px] text-center text-[34px] font-[700] text-[#1B2559]">
                         Create Account
                     </h2>
-                    <p className='text-[#A3AED0] text-center font-[500] text-[16px]'>Start your jaournling journey</p>
+                    <p className='max-[750px]:text-[12px] text-[#A3AED0] text-center font-[500] text-[16px]'>Start your jaournling journey</p>
 
 
                     {error && (
@@ -113,7 +112,7 @@ const SignUp = () => {
                             value={formData.fullName}
                             onChange={handleChange}
                             required
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                            className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
@@ -125,7 +124,7 @@ const SignUp = () => {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                            className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
@@ -137,7 +136,7 @@ const SignUp = () => {
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                            className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
@@ -149,7 +148,7 @@ const SignUp = () => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             required
-                            className="bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                            className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
                         />
                     </label>
 
@@ -161,7 +160,7 @@ const SignUp = () => {
                         {loading ? "Creating..." : "Create account"}
                     </button>
 
-                    <p className="text-center text-[14px] mt-3 text-[#A3AED0] font-[600]">
+                    <p className="max-[750px]:text-[12px] text-center text-[14px] mt-3 text-[#A3AED0] font-[600]">
                         Already have an account?{' '}
                         <Link to='/SignIn' className="text-[#4318FF] font-[600] text-[14px]">
                             Sign In
