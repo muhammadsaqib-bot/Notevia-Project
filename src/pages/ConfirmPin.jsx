@@ -1,16 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
 import bg from '../assets/bg.PNG';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Toaster from "../components/Toaster";
+import { Link } from "react-router-dom";
 
 const ConfirmPin = () => {
+    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
     const [pin, setPin] = useState(["", "", "", ""]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [toastMsg, setToastMsg] = useState("");
+    const [toastOpen, setToastOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (value, index) => {
         if (!/^[0-9]?$/.test(value)) return;
         const newPin = [...pin];
         newPin[index] = value;
         setPin(newPin);
+    };
+
+    const showToast = (msg) => {
+        setToastMsg(msg);
+        setToastOpen(true);
+        setTimeout(() => setToastOpen(false), 2000);
+    };
+
+    const handleVerifyPin = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        if (pin.some((digit) => digit === "")) {
+            setError("Please enter your full 4-digit PIN");
+            return;
+        }
+
+        const pinString = pin.join("");
+
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${API_BASE_URL}pin/verify`,
+                { pin: pinString },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data.success || response.status === 200) {
+                if (response.data.accessToken) localStorage.setItem('token', response.data.accessToken);
+                else if (response.data.token) localStorage.setItem('token', response.data.token);
+
+                showToast("PIN verified successfully!");
+                setTimeout(() => navigate('/Notevia'), 1500);
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || "Invalid PIN. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -24,6 +78,8 @@ const ConfirmPin = () => {
                 backgroundAttachment: 'fixed',
             }}
         >
+            {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
+
             {/* Mirrored background for large screens */}
             <div
                 className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
@@ -43,13 +99,19 @@ const ConfirmPin = () => {
                 </div>
 
                 {/* Form */}
-                <form className="rounded-3xl bg-white w-full p-6 sm:p-10 shadow-sm">
+                <form onSubmit={handleVerifyPin} className="rounded-3xl bg-white w-full p-6 sm:p-10 shadow-sm">
                     <h2 className="text-center text-2xl sm:text-3xl font-bold text-[#1B2559]">
                         Confirm your PIN
                     </h2>
                     <p className="text-center text-sm sm:text-base mt-2 text-[#A3AED0]">
                         Please confirm your PIN
                     </p>
+
+                    {error && (
+                        <div className="bg-red-100 text-red-600 p-3 rounded-xl mt-4 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
 
                     {/* PIN Boxes */}
                     <div className="flex justify-center gap-2 sm:gap-4 mt-6 mb-6">
@@ -69,17 +131,18 @@ const ConfirmPin = () => {
                     {/* Continue Button */}
                     <button
                         type="submit"
-                        className="w-full h-10 sm:h-14 bg-gradient-to-r from-[#4318FF] to-[#6A53FF] rounded-full font-medium text-white"
+                        disabled={loading}
+                        className="w-full h-10 sm:h-14 bg-gradient-to-r from-[#4318FF] to-[#6A53FF] rounded-full font-medium text-white disabled:opacity-50"
                     >
-                        Continue
+                        {loading ? "Verifying..." : "Continue"}
                     </button>
 
                     {/* Back Link */}
                     <p className="text-center text-xs sm:text-sm mt-4 sm:mt-6 text-[#A3AED0]">
                         Back to{" "}
-                        <span className="text-[#4318FF] font-semibold underline cursor-pointer">
-                            change PIN
-                        </span>
+                        <Link to='/CreatePin' className="text-[#4318FF] font-semibold underline cursor-pointer">
+                            Create PIN
+                        </Link>
                     </p>
                 </form>
             </div>

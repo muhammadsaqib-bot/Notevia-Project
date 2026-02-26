@@ -7,74 +7,121 @@ import edit from '../assets/bluePen.PNG'
 import remove from '../assets/basket.PNG'
 import emoji from '../assets/emoji.PNG'
 import copy from '../assets/copy.PNG'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Dashboard from './Dashboard'
+import Toaster from "../components/Toaster";
 
 const NoteviApp = () => {
   const API_BASE_URL = 'https://new-my-journals.vercel.app/';
-  let [name, setName] = useState("");
+  const [name, setName] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastOpen, setToastOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setToastOpen(true);
+    setTimeout(() => setToastOpen(false), 2000);
+  };
 
   useEffect(() => {
-    const Profile = async () => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
       try {
-        const res = await axios.get(`${API_BASE_URL}profiles/me`, {
+        const response = await axios.get(`${API_BASE_URL}profiles/me`, {
           headers: {
-            "Authorization": `Bearer ${localStorage.token}`
+            Authorization: `Bearer ${token}`
           }
-        })
-        setName(res.data.full_name)
+        });
+        console.log(response);
+
+        setName(response.data.full_name || response.data.name || "Guest");
       } catch (err) {
-        console.error(err)
+        if (err.response?.status === 401) {
+          showToast("Please verify your PIN");
+          setTimeout(() => {
+            navigate("/ConfirmPin");
+          }, 1500);
+          return;
+        }
+        const msg = err.response?.data?.message || "Session expired. Please login again.";
+        showToast(msg);
+        setTimeout(() => {
+          localStorage.removeItem("token");
+          navigate("/SignIn");
+        }, 1500);
       }
-    }
-    Profile()
-  }, [])
+    };
+
+    fetchProfile();
+  }, []);
+
 
   return (
-    <div className='w-screen min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row'>
+    <div className='max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row'>
+      {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
       {/* Sidebar */}
-      <div className='w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[10px] shadow-sm shrink-0'>
-        <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-center w-full h-[45px] rounded-[5px] border-b border-[#E6EDFF] pb-10'>
-          <img src={logo} alt="" />
-          <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
+      <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
+        <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
+          <div className="flex items-center gap-4 pr-[35px]">
+            <img src={logo} alt="" />
+            <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
+          </div>
+
+          {/* Hamburger Icon for Mobile */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-[#1B2559]"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMenuOpen
+                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              }
+            </svg>
+          </button>
         </div>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
+        <Link to='/Dashboard1' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[16px] w-[16px]' src={dashboard} alt="" />
-            <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Dashboard</p>
+            <span className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Dashboard</span>
           </div>
-        </div>
+        </Link>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
+        <Link to='/Journals' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px] w-[17px]' src={journal} alt="" />
-            <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</p>
+            <span className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</span>
           </div>
-        </div>
+        </Link>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
+        <Link to='/AddJournal' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px]' src={pen} alt="" />
-            <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</p>
+            <span className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</span>
           </div>
-        </div>
+        </Link>
 
-        <div className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
+        <Link to='/Profile' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-8 mb-5'>
           <div className='flex items-center gap-3'>
             <img className='h-[20px]' src={profile} alt="" />
-            <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Profile</p>
+            <span className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Profile</span>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Main Content */}
       <div className='md:ml-[290px] flex-1 p-4 md:p-8 overflow-x-hidden'>
 
         {/* Greeting */}
-        <p className='text-[#707EAE] text-[14px] font-[700] leading-[24px] '>Hi {name},</p>
+        <p className='text-[#707EAE] text-[14px] font-[700] leading-[24px] '>Hi {name || 'User'},</p>
         <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-[700] mb-6 md:mb-8'>Welcome to Notevia!</h1>
 
         {/* Journal Card */}

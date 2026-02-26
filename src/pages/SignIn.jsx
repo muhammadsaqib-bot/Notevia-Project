@@ -71,9 +71,7 @@ const SignIn = () => {
 
                 if (res.token) localStorage.setItem('token', res.token);
                 showToast(res.message || "Login successful 🎉");
-                // navigate("/Dashboard1", {
-                //     state: { name: "Muhammad Saqib" }
-                // });
+                navigate("/Notevia");
             } else if (res.message === "Please verify your account first") {
                 showToast(res.message);
                 setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
@@ -82,6 +80,10 @@ const SignIn = () => {
             }
         } catch (err) {
             const msg = err.response?.data?.message || "Something went wrong";
+            if (msg === "Please verify your account first") {
+                showToast(msg);
+                return setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
+            }
             setError(msg);
         } finally {
             setLoading(false);

@@ -8,6 +8,12 @@ import NotFound from './pages/NotFound.jsx'
 import VerifyEmail from './pages/VerifyEmail.jsx';
 import NoteviApp from './pages/Notevia.jsx'
 import CreatPin from './pages/CreatPin.jsx'
+import Journals from './pages/Journals.jsx'
+import AddJournal from './pages/AddJournal.jsx'
+import Profile from './pages/Profile.jsx'
+import ConfirmPin from './pages/ConfirmPin.jsx'
+
+
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token')
@@ -53,6 +59,39 @@ const App = () => {
         element={
           <ProtectedRoute>
             <DashboardWithProps />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/Journals"
+        element={
+          <ProtectedRoute>
+            <Journals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ConfirmPin"
+        element={
+          <ProtectedRoute>
+            <ConfirmPin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/AddJournal"
+        element={
+          <ProtectedRoute>
+            <AddJournal />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />
