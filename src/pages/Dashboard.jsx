@@ -296,14 +296,14 @@ const Dashboard = () => {
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-6">
-                    <button className="bg-[#4318FF] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm font-semibold flex items-center justify-center gap-2">
-                        <img src={plus} alt="" /> <Link to='/AddJournal'>
-                            Add Journal</Link>
-                    </button>
-                    <button className="bg-[#E9E6FF] text-[#4318FF] px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm font-semibold w-full sm:w-auto">
+                    <Link to='/AddJournal' className="bg-[#4318FF] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm font-semibold flex items-center justify-center gap-2">
+                        <img src={plus} alt="" />
+                        <span>Add Journal</span>
+                    </Link>
+                    <Link to='/Journals' className="bg-[#E9E6FF] text-[#4318FF] px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm font-semibold w-full sm:w-auto">
                         <Link to='/Journals'>
                             View All Journals</Link>
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
