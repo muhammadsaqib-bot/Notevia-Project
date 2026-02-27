@@ -94,7 +94,7 @@ const AddJournal = () => {
             const formData = new FormData();
             formData.append("title", title);
             formData.append("content", entry.trim());
-            formData.append("journal_date", date);
+            formData.append("journalDate", new Date(date).toISOString());
             formData.append("mood", selectedMood);
             if (selectedFile) {
                 formData.append("files", selectedFile);

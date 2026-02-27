@@ -101,7 +101,7 @@ const SignIn = () => {
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
             <div
-                className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
+                className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center relative py-10"
                 style={{
                     backgroundImage: `url(${bg})`,
                     backgroundSize: 'cover',
