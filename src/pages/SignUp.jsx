@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
 import { Link, useNavigate } from 'react-router-dom';
@@ -19,57 +19,42 @@ const SignUp = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/Notevia');
+        }
+    }, [navigate]);
 
     function handleChange(e) {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
     async function SignUpSubmitted(e) {
         e.preventDefault();
         setError(null);
-        setMessage(null);
 
         if (formData.password !== formData.confirmPassword) {
-            return setError("Passwords do not match");
+            setError("Passwords do not match");
+            return;
         }
 
         try {
             setLoading(true);
+            await axios.post(`${API_BASE_URL}auth/register`, {
+                name: formData.fullName,
+                email: formData.email,
+                passwordHash: formData.password,
+            });
 
-            const response = await axios.post(
-                `${API_BASE_URL}auth/register`,
-                {
-                    name: formData.fullName,
-                    email: formData.email,
-                    passwordHash: formData.password,
-                }
-            );
-
-            setMessage("Account created successfully 🎉");
-
-            // Save token if backend returns one
-            if (response.data.token) {
-            }
-
-            setTimeout(() => {
-                navigate('/VerifyEmail', { state: { email: formData.email } });
-            }, 1500);
-
+            navigate('/VerifyEmail', { state: { email: formData.email } });
         } catch (err) {
-            setError(
-                err.response?.data?.message || "Something went wrong"
-            );
+            setError(err.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     }
-    if (localStorage.token) {
-        navigate('/Notevia');
-    }
+
     return (
         <div
             className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
@@ -97,12 +82,6 @@ const SignUp = () => {
                     {error && (
                         <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">
                             {error}
-                        </div>
-                    )}
-
-                    {message && (
-                        <div className="bg-green-100 text-green-600 p-2 rounded mt-4 text-sm">
-                            {message}
                         </div>
                     )}
 

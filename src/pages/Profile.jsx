@@ -3,7 +3,7 @@ import dashboard1 from "../assets/dashboardIcon.PNG";
 import journalIcon from "../assets/JournalIcon.PNG";
 import penIcon from "../assets/penIcon.PNG";
 import profileIcon from "../assets/profileIcon.PNG";
-import user from '../assets/user.PNG';
+// import user from '../assets/user.PNG';
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,70 +13,69 @@ const Profile = () => {
     const API_BASE_URL = 'https://new-my-journals.vercel.app/';
     const navigate = useNavigate();
 
-    // ----- Profile State -----
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
+    const [displayName, setDisplayName] = useState("");
     const [dob, setDob] = useState("");
     const [bio, setBio] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
     const [previewPic, setPreviewPic] = useState(null);
+    const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(true);
 
-    // ----- Toast State -----
     const [toastMsg, setToastMsg] = useState("");
     const [toastOpen, setToastOpen] = useState(false);
 
-    // ----- Change Password Modal State -----
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordLoading, setPasswordLoading] = useState(false);
-
     const fileInputRef = useRef(null);
 
-    // ----- Show Toast Helper -----
     const showToast = (msg) => {
         setToastMsg(msg);
         setToastOpen(true);
-        setTimeout(() => setToastOpen(false), 2500);
+        setTimeout(() => setToastOpen(false), 2000);
     };
 
-    // ----- Fetch Profile on Page Load -----
     useEffect(() => {
         const fetchProfile = async () => {
             const token = localStorage.getItem('token');
-            if (!token) return navigate("/SignIn");
+            if (!token) {
+                navigate("/SignIn");
+                return;
+            }
 
             try {
                 const response = await axios.get(`${API_BASE_URL}profiles/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
                 setFullName(response.data.full_name || "");
-                setEmail(response.data.email || "");
+                setDisplayName(response.data.full_name || "");
                 setBio(response.data.bio || "");
                 setDob(response.data.date_of_birth || "");
-
+                setEmail(response.data.email || response.data.user?.email || "");
                 if (response.data.profile_picture) {
                     setPreviewPic(response.data.profile_picture);
                 }
+                setIsVerifying(false);
 
             } catch (err) {
                 if (err.response?.status === 401) {
-                    showToast(err.response?.data?.message || "Please verify your PIN");
-                    setTimeout(() => navigate("/ConfirmPin"), 1500);
+                    navigate("/ConfirmPin");
                     return;
                 }
-                showToast(err.response?.data?.message || "Something went wrong.");
+                showToast(err.response?.data?.message || "Session expired. Please login again.");
+                localStorage.removeItem("token");
+                navigate("/SignIn");
             }
         };
 
         fetchProfile();
     }, [navigate]);
 
-    // ----- When user picks a new profile picture -----
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -88,10 +87,14 @@ const Profile = () => {
         reader.readAsDataURL(file);
     };
 
-    // ----- Save Profile Changes -----
     const handleSave = async () => {
         const token = localStorage.getItem('token');
         if (!token) return navigate("/SignIn");
+
+        if (!fullName.trim() || !dob || !bio.trim()) {
+            showToast("Please fill in all profile fields.");
+            return;
+        }
 
         setLoading(true);
 
@@ -101,9 +104,7 @@ const Profile = () => {
             formData.append("date_of_birth", dob);
             formData.append("bio", bio);
 
-            if (profilePicture) {
-                formData.append("profile_picture", profilePicture);
-            }
+            if (profilePicture) formData.append("profile_picture", profilePicture);
 
             await axios.patch(`${API_BASE_URL}profiles/me`, formData, {
                 headers: {
@@ -112,6 +113,7 @@ const Profile = () => {
                 }
             });
 
+            setDisplayName(fullName);
             showToast("Profile updated successfully!");
 
         } catch (err) {
@@ -126,26 +128,14 @@ const Profile = () => {
         }
     };
 
-    // ----- Change Password API Call -----
     const handleUpdatePassword = async () => {
-
-        // Step 1: Check all fields are filled
         if (!currentPassword || !newPassword || !confirmPassword) {
             showToast("Please fill in all password fields.");
             return;
         }
 
-        // Step 2: Check new passwords match
         if (newPassword !== confirmPassword) {
             showToast("New password and confirm password do not match.");
-            return;
-        }
-
-        // Step 3: Basic password strength check before hitting API
-        // API requires: uppercase, lowercase, number, special character, min 8 chars
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passwordRegex.test(newPassword)) {
-            showToast("Password must have uppercase, lowercase, number & special character (min 8 chars).");
             return;
         }
 
@@ -155,17 +145,14 @@ const Profile = () => {
         setPasswordLoading(true);
 
         try {
-            // ✅ API expects camelCase: currentPassword and newPassword
             await axios.post(`${API_BASE_URL}auth/change-password`, {
-                currentPassword: currentPassword,   // ✅ camelCase - not current_password
-                newPassword: newPassword,           // ✅ camelCase - not new_password
+                currentPassword,
+                newPassword,
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
             showToast("Password updated successfully!");
-
-            // Close modal and clear all fields
             setShowPasswordModal(false);
             setCurrentPassword("");
             setNewPassword("");
@@ -176,47 +163,42 @@ const Profile = () => {
                 showToast("Current password is incorrect.");
                 return;
             }
-            // Show exact error from API if available
-            const apiError = err.response?.data?.message || err.response?.data?.error;
-            showToast(apiError || "Failed to update password.");
+            showToast(err.response?.data?.message || "Failed to update password.");
         } finally {
             setPasswordLoading(false);
         }
     };
 
-    // ----- Close Modal and clear fields -----
-    const handleCancelModal = () => {
+    const closeModal = () => {
         setShowPasswordModal(false);
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
     };
 
-    // ----- Logout -----
     const handleLogout = () => {
         localStorage.removeItem("token");
         showToast("Logged out successfully");
         setTimeout(() => navigate("/SignIn"), 1000);
     };
 
+    if (isVerifying) {
+        return (
+            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center">
+                <div className="w-12 h-12 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-
-            {/* Toast Notification */}
             {toastOpen && (
                 <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />
             )}
 
-            {/* =============================================
-                CHANGE PASSWORD MODAL
-            ============================================= */}
             {showPasswordModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b14374d] backdrop-blur-[8px]">
-
-                    {/* Modal Box */}
                     <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-[500px] mx-4">
-
-                        {/* Title */}
                         <h2 className="text-2xl font-bold text-[#2B3674] text-center mb-6">
                             Change Password
                         </h2>
@@ -235,7 +217,6 @@ const Profile = () => {
                             />
                         </div>
 
-                        {/* New Password */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">
                                 New Password
@@ -244,12 +225,11 @@ const Profile = () => {
                                 type="password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="Min 8 chars, uppercase, number, special char"
+                                placeholder="Enter new password"
                                 className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#2B3674] outline-none focus:border-[#4318FF] transition-colors"
                             />
                         </div>
 
-                        {/* Confirm Password */}
                         <div className="mb-8">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">
                                 Confirm Password
@@ -263,10 +243,9 @@ const Profile = () => {
                             />
                         </div>
 
-                        {/* Buttons */}
                         <div className="flex gap-4">
                             <button
-                                onClick={handleCancelModal}
+                                onClick={closeModal}
                                 className="flex-1 h-[50px] rounded-full border border-[#E6EDFF] bg-[#F4F7FE] text-[#2B3674] text-sm font-[500] hover:bg-gray-100 transition-colors cursor-pointer"
                             >
                                 Cancel
@@ -284,12 +263,11 @@ const Profile = () => {
                 </div>
             )}
 
-            {/* ===== SIDEBAR ===== */}
             <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
-
                 <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
                     <div className="flex items-center gap-4 pr-[35px]">
-                        <img src={noteviaLogo} alt="" />
+                        <Link to='/Notevia' className="cursor-pointer">
+                            <img src={noteviaLogo} alt="" /></Link>
                         <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
                     </div>
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#1B2559]">
@@ -331,17 +309,15 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* ===== MAIN CONTENT ===== */}
             <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
-
                 <div className="flex justify-between items-center mb-6 sm:mb-8">
                     <div>
-                        <p className="text-sm text-[#A3AED0]">Hi {fullName.split(' ')[0] || 'User'},</p>
+                        <p className="text-sm text-[#A3AED0]">Hi {displayName.split(' ')[0] || 'User'},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3674]">Welcome to Notevia!</h1>
                     </div>
                     <div className="bg-white p-1 rounded">
                         <img
-                            src={previewPic || user}
+                            src={previewPic || "https://via.placeholder.com/150"}
                             alt="Profile"
                             className="border border-[gray] p-1 w-12 h-12 rounded-full object-cover"
                         />
@@ -349,7 +325,6 @@ const Profile = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
-
                     <div className="flex items-center gap-2 mb-6">
                         <Link to="/Dashboard1" className="text-[#2B3674] hover:text-[#4318FF] transition-colors cursor-pointer">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -359,7 +334,6 @@ const Profile = () => {
                         <h2 className="text-lg font-semibold text-[#2B3674]">Update Profile</h2>
                     </div>
 
-                    {/* Avatar */}
                     <div className="flex items-center gap-4 mb-8">
                         <div
                             className="relative w-[70px] h-[70px] rounded-full cursor-pointer group"
@@ -388,7 +362,6 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Full Name + Email */}
                     <div className="flex flex-col min-[768px]:flex-row gap-6 mb-6">
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Full Name</label>
@@ -403,15 +376,14 @@ const Profile = () => {
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Email</label>
                             <input
-                                type="email"
+                                type="text"
                                 value={email}
                                 readOnly
-                                className="w-full bg-[#EFEFEF] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#A3AED0] outline-none cursor-not-allowed"
+                                className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#A3AED0] outline-none cursor-not-allowed opacity-70"
                             />
                         </div>
                     </div>
 
-                    {/* Date of Birth */}
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Date of Birth</label>
                         <input
@@ -422,7 +394,6 @@ const Profile = () => {
                         />
                     </div>
 
-                    {/* Bio */}
                     <div className="mb-8">
                         <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Bio</label>
                         <textarea
@@ -434,7 +405,6 @@ const Profile = () => {
                         />
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex justify-end gap-3 flex-wrap">
                         <button
                             onClick={handleLogout}
@@ -443,7 +413,6 @@ const Profile = () => {
                             Logout
                         </button>
 
-                        {/* This button opens the modal */}
                         <button
                             onClick={() => setShowPasswordModal(true)}
                             className="w-[213px] h-[50px] rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-[500] hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A]"

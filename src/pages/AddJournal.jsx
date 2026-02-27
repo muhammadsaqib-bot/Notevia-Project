@@ -3,7 +3,6 @@ import dashboard1 from "../assets/dashboardIcon.PNG";
 import journalIcon from "../assets/JournalIcon.PNG";
 import penIcon from "../assets/penIcon.PNG";
 import profileIcon from "../assets/profileIcon.PNG";
-import user from '../assets/user.PNG';
 import calendarIcon from "../assets/calendar.PNG";
 import emji from '../assets/emoji.PNG';
 import sad from '../assets/sad.PNG';
@@ -26,6 +25,7 @@ const AddJournal = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [name, setName] = useState("");
+    const [profilePic, setProfilePic] = useState(null);
     const [toastMsg, setToastMsg] = useState("");
     const [toastOpen, setToastOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -40,7 +40,10 @@ const AddJournal = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             const token = localStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                navigate("/SignIn");
+                return;
+            }
 
             try {
                 const response = await axios.get(`${API_BASE_URL}profiles/me`, {
@@ -49,32 +52,26 @@ const AddJournal = () => {
                     }
                 });
                 setName(response.data.full_name || response.data.name || response.data.user?.name || "Guest");
+                setProfilePic(response.data.profile_picture || null);
             } catch (err) {
                 if (err.response?.status === 401) {
-                    showToast("Please verify your PIN");
-                    setTimeout(() => {
-                        navigate("/ConfirmPin");
-                    }, 1500);
+                    navigate("/ConfirmPin");
                     return;
                 }
-                const msg = err.response?.data?.message || "Session expired. Please login again.";
-                showToast(msg);
-                setTimeout(() => {
-                    localStorage.removeItem("token");
-                    navigate("/SignIn");
-                }, 1500);
+                showToast(err.response?.data?.message || "Session expired. Please login again.");
+                localStorage.removeItem("token");
+                navigate("/SignIn");
             }
         };
 
         fetchProfile();
-    }, []);
+    }, [navigate]);
 
     const handleCancel = () => {
         navigate("/Dashboard1");
     };
 
     const handleSave = async () => {
-        // Basic validation
         if (!title.trim()) {
             setError("Title is required.");
             return;
@@ -94,15 +91,11 @@ const AddJournal = () => {
         try {
             const token = localStorage.getItem('token');
 
-            // Build multipart/form-data — matches the API fields:
-            // title, content, journalDate, files (optional), mood
             const formData = new FormData();
             formData.append("title", title);
-            formData.append("content", entry);
-            formData.append("journalDate", date);   // e.g. "2023-12-20"
+            formData.append("content", entry.trim());
+            formData.append("journal_date", date);
             formData.append("mood", selectedMood);
-
-            // Only append file if the user selected one
             if (selectedFile) {
                 formData.append("files", selectedFile);
             }
@@ -114,7 +107,6 @@ const AddJournal = () => {
                 }
             });
 
-            console.log("Journal saved:", response.data);
             showToast("Journal saved successfully!");
             setTimeout(() => {
                 navigate("/Journals");
@@ -140,15 +132,13 @@ const AddJournal = () => {
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
-            {/* Sidebar */}
-            <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
+            <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm z-50 transition-all ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] md:h-screen'}`}>
                 <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
                     <div className="flex items-center gap-4 pr-[35px]">
                         <img src={noteviaLogo} alt="" />
                         <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
                     </div>
 
-                    {/* Hamburger Icon for Mobile */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         className="md:hidden p-2 text-[#1B2559]"
@@ -191,10 +181,8 @@ const AddJournal = () => {
                 </Link>
             </div>
 
-            {/* Main Content */}
             <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
 
-                {/* Top Bar */}
                 <div className="flex justify-between items-center mb-6 sm:mb-8">
                     <div>
                         <p className="text-sm text-[#A3AED0]">Hi {name},</p>
@@ -202,27 +190,23 @@ const AddJournal = () => {
                     </div>
                     <div className="bg-white p-1 rounded">
                         <img
-                            src={user}
+                            src={profilePic || "https://via.placeholder.com/150"}
                             alt="Profile"
                             className="border border-[gray] p-1 w-12 h-12 rounded-full object-cover"
                         />
                     </div>
                 </div>
 
-                {/* New Journal Form */}
                 <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
                     <h2 className="text-lg font-semibold text-[#2B3674] mb-6">New Journal</h2>
 
-                    {/* Error Message */}
                     {error && (
                         <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-6 text-sm">
                             {error}
                         </div>
                     )}
 
-                    {/* Row 1: Title + Mood */}
                     <div className="flex flex-col min-[768px]:flex-row gap-6 mb-6">
-                        {/* Title */}
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">Title</label>
                             <input
@@ -234,7 +218,6 @@ const AddJournal = () => {
                             />
                         </div>
 
-                        {/* How are you feeling */}
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">How are you feeling?</label>
                             <div className="flex flex-wrap gap-2">
@@ -260,9 +243,7 @@ const AddJournal = () => {
                         </div>
                     </div>
 
-                    {/* Row 2: Date */}
                     <div className="flex flex-col min-[768px]:flex-row gap-6 mb-6">
-                        {/* Date */}
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">Date</label>
                             <div className="relative">
@@ -272,19 +253,15 @@ const AddJournal = () => {
                                     className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
                                 />
                                 <input
-                                    type={date ? "date" : "text"}
+                                    type="date"
                                     value={date}
-                                    placeholder="09 / 12 / 2024"
-                                    onFocus={(e) => (e.target.type = "date")}
                                     onChange={(e) => setDate(e.target.value)}
-                                    onBlur={(e) => !date && (e.target.type = "text")}
                                     className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 pr-10 text-sm text-[#2B3674] placeholder:text-[#A3AED0] outline-none focus:border-[#4318FF] transition-colors"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    {/* File Upload (optional) */}
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-[#2B3674] mb-2">Attach File <span className="text-[#A3AED0] font-normal">(optional)</span></label>
                         <div
@@ -304,7 +281,6 @@ const AddJournal = () => {
                         />
                     </div>
 
-                    {/* Journal Entry */}
                     <div className="mb-8">
                         <label className="block text-sm font-medium text-[#2B3674] mb-2">Journal Entry</label>
                         <textarea
@@ -316,7 +292,6 @@ const AddJournal = () => {
                         />
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex justify-end gap-4">
                         <button
                             onClick={handleCancel}

@@ -11,91 +11,57 @@ const API_BASE_URL = 'https://new-my-journals.vercel.app/';
 
 const SignIn = () => {
     const navigate = useNavigate();
-
-    // Login form state
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    // UI state
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [toastMsg, setToastMsg] = useState('');
     const [toastOpen, setToastOpen] = useState(false);
-
-    // Forgot password modal state
     const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
-    const [step, setStep] = useState(1); // 1 = enter email, 2 = reset password
+    const [step, setStep] = useState(1);
     const [resetEmail, setResetEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [resetError, setResetError] = useState('');
     const [resetLoading, setResetLoading] = useState(false);
 
-    // Redirect if already logged in
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) navigate('/Notevia', { replace: true });
     }, [navigate]);
 
-    // Show toast
     const showToast = (msg) => {
         setToastMsg(msg);
         setToastOpen(true);
         setTimeout(() => setToastOpen(false), 2000);
     };
 
-    // Login submit
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
-        if (!email || !password) {
-            setError("Please fill all fields");
-            return;
-        }
-
         try {
             setLoading(true);
             const response = await axios.post(`${API_BASE_URL}auth/login`, { email, password });
-            const res = response.data;
-            console.log(res);
+            const { token, message } = response.data;
 
-            if (res.success) {
-                if (res.token) localStorage.setItem('token', res.token);
-
-                // 👇 NAME SAVE KARO
-
-                const userName = res.user.name;
-
-
-
-                if (res.token) localStorage.setItem('token', res.token);
-                showToast(res.message || "Login successful 🎉");
-                navigate("/Notevia");
-            } else if (res.message === "Please verify your account first") {
-                showToast(res.message);
-                setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
-            } else {
-                setError(res.message || "Login failed");
-            }
+            localStorage.setItem('token', token);
+            showToast(message || "Login successful 🎉");
+            navigate("/Notevia");
         } catch (err) {
             const msg = err.response?.data?.message || "Something went wrong";
             if (msg === "Please verify your account first") {
                 showToast(msg);
-                return setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
+                setTimeout(() => navigate("/VerifyEmail", { state: { email } }), 1200);
+            } else {
+                setError(msg);
             }
-            setError(msg);
         } finally {
             setLoading(false);
         }
     };
 
-    // Handle sending OTP (Step 1)
     const sendOtp = async () => {
-        if (!resetEmail) {
-            setResetError("Please enter your email");
-            return;
-        }
         try {
             setResetLoading(true);
             await axios.post(`${API_BASE_URL}auth/forgot-password`, { email: resetEmail });
@@ -109,12 +75,7 @@ const SignIn = () => {
         }
     };
 
-    // Handle password reset (Step 2)
     const resetPassword = async () => {
-        if (!otp || !newPassword) {
-            setResetError("Please fill all fields");
-            return;
-        }
         try {
             setResetLoading(true);
             await axios.post(`${API_BASE_URL}auth/reset-password`, {
@@ -149,9 +110,8 @@ const SignIn = () => {
                     backgroundAttachment: 'fixed',
                 }}
             >
-                {/* Login form */}
                 <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
-                    <div className="pl-20 flex justify-center items-center gap-2 ">
+                    <div className="flex justify-center items-center gap-2 ">
                         <img src={logo} alt="Logo" className="w-10 h-10" />
                         <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                     </div>
@@ -169,6 +129,7 @@ const SignIn = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                                required
                             />
                         </label>
 
@@ -179,6 +140,7 @@ const SignIn = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="outline-none bg-[#FAFBFF] border border-[#E6EDFF] w-full h-12 rounded px-3"
+                                required
                             />
                         </label>
 
@@ -224,7 +186,6 @@ const SignIn = () => {
                     className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
                 />
 
-                {/* Forgot Password Modal */}
                 {forgotPasswordOpen && (
                     <div className="fixed inset-0 bg-gray-100 shadow-sm  bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
                         <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">

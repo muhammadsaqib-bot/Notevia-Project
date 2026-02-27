@@ -9,13 +9,10 @@ import Toaster from '../components/Toaster'
 const API_BASE_URL = 'https://new-my-journals.vercel.app/'
 
 const VerifyAccount = () => {
-    const { state } = useLocation()
+    const { state } = useLocation();
     const navigate = useNavigate()
-
-    // Safely get email
     const email = state?.email || ''
 
-    // If no email, redirect back to SignIn
     useEffect(() => {
         if (!email) {
             navigate('/SignIn', { replace: true })
@@ -28,33 +25,37 @@ const VerifyAccount = () => {
     const [toastMsg, setToastMsg] = useState('')
     const [toastOpen, setToastOpen] = useState(false)
 
-    // OTP input change
     const handleOtpChange = (e, idx) => {
         const val = e.target.value
         if (/^\d?$/.test(val)) {
             const newOtp = [...otp]
             newOtp[idx] = val
             setOtp(newOtp)
-            if (val && idx < 5) document.getElementById(`otp-${idx + 1}`).focus()
+            if (val && idx < 5) {
+                document.getElementById(`otp-${idx + 1}`).focus()
+            }
         }
     }
 
-    // Countdown timer
+    const handlePaste = (e) => {
+        const pasteData = e.clipboardData.getData("text").slice(0, 6).split("");
+        if (pasteData.every(char => /^\d$/.test(char))) {
+            setOtp(pasteData.concat(Array(6 - pasteData.length).fill("")));
+        }
+    };
+
     useEffect(() => {
         if (timer > 0) {
-            const id = setTimeout(() => setTimer(timer - 1), 1000)
-            return () => clearTimeout(id)
+            const id = setTimeout(() => setTimer(timer - 1), 1000);
+            return () => clearTimeout(id);
         }
-    }, [timer])
+    }, [timer]);
 
-    // Show toast
     const showToast = (msg) => {
         setToastMsg(msg)
-        setToastOpen(false)
-        setTimeout(() => setToastOpen(true), 0)
+        setToastOpen(true)
     }
 
-    // Submit OTP
     const handleSubmit = async (e) => {
         e.preventDefault()
         const code = otp.join('')
@@ -66,13 +67,10 @@ const VerifyAccount = () => {
         try {
             setLoading(true)
             const res = await axios.post(`${API_BASE_URL}auth/verify-account`, { email, otp: code })
-            localStorage.setItem("token", res.data.token)
-            console.log("Result: ", res.data.token);
-
-            if (res) {
+            if (res.data.token) {
+                localStorage.setItem("token", res.data.token)
                 showToast('Account verified successfully 🎉')
                 setTimeout(() => navigate('/CreatePin'), 1500)
-            } else {
                 showToast(res.data.message || 'Invalid OTP')
             }
         } catch (err) {
@@ -82,7 +80,6 @@ const VerifyAccount = () => {
         }
     }
 
-    // Resend OTP
     const handleResend = async () => {
         try {
             setLoading(true)
@@ -117,21 +114,20 @@ const VerifyAccount = () => {
 
                 <form onSubmit={handleSubmit} className="rounded-2xl bg-white w-full p-8">
                     <h2 className="text-center text-3xl font-bold text-[#1B2559]">Verify Your Account</h2>
-                    <p className="text-center text-sm mt-2 text-gray-500">
-                        We've sent a 6-digit verification code to
-                    </p>
-                    {email && <p className="text-center text-base font-medium text-[#1B2559] pb-4">{email}</p>}
+                    <p className="text-center text-sm mt-2 text-gray-500">Code sent to</p>
+                    <p className="text-center text-base font-medium text-[#1B2559] pb-6">{email}</p>
 
                     <div className="flex justify-between gap-2 mb-6">
                         {otp.map((val, idx) => (
                             <input
+                                onPaste={handlePaste}
                                 key={idx}
                                 id={`otp-${idx}`}
                                 type="text"
                                 maxLength="1"
                                 value={val}
                                 onChange={(e) => handleOtpChange(e, idx)}
-                                className="w-12 h-12 text-center text-lg bg-[#FAFBFF] border border-[#E6EDFF] rounded"
+                                className="w-12 h-12 text-center text-lg bg-[#FAFBFF] border border-[#E6EDFF] rounded outline-none focus:border-[#4318FF]"
                             />
                         ))}
                     </div>
@@ -139,7 +135,7 @@ const VerifyAccount = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-4 disabled:opacity-50"
+                        className="w-full h-12 bg-[#4318FF] rounded-3xl font-bold text-white mt-4 disabled:opacity-50 cursor-pointer"
                     >
                         {loading ? 'Verifying...' : 'Continue'}
                     </button>

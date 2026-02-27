@@ -16,11 +16,24 @@ const ConfirmPin = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const navigate = useNavigate();
 
+    const handlePaste = (e) => {
+        const data = e.clipboardData.getData("text").slice(0, 4).split("");
+        if (data.every(char => /^\d$/.test(char))) {
+            const newPin = [...data, ...Array(4 - data.length).fill("")];
+            setPin(newPin);
+            document.getElementById(`pin-${Math.min(data.length, 3)}`).focus();
+        }
+    };
+
     const handleChange = (value, index) => {
         if (!/^[0-9]?$/.test(value)) return;
         const newPin = [...pin];
         newPin[index] = value;
         setPin(newPin);
+
+        if (value && index < 3) {
+            document.getElementById(`pin-${index + 1}`)?.focus();
+        }
     };
 
     const showToast = (msg) => {
@@ -33,7 +46,7 @@ const ConfirmPin = () => {
         e.preventDefault();
         setError(null);
 
-        if (pin.some((digit) => digit === "")) {
+        if (pin.includes("")) {
             setError("Please enter your full 4-digit PIN");
             return;
         }
@@ -80,7 +93,6 @@ const ConfirmPin = () => {
         >
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
-            {/* Mirrored background for large screens */}
             <div
                 className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
                 style={{
@@ -92,14 +104,12 @@ const ConfirmPin = () => {
             ></div>
 
             <div className="flex flex-col gap-6 sm:gap-10 relative z-10 w-full max-w-md px-4">
-                {/* Logo */}
                 <div className="flex justify-center items-center gap-2">
                     <img src={logo} alt="Logo" className="w-9 h-9 sm:w-10 sm:h-10" />
                     <h3 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleVerifyPin} className="rounded-3xl bg-white w-full p-6 sm:p-10 shadow-sm">
+                <form onSubmit={handleVerifyPin} className="rounded-3xl bg-white w-full p-8 shadow-sm">
                     <h2 className="text-center text-2xl sm:text-3xl font-bold text-[#1B2559]">
                         Confirm your PIN
                     </h2>
@@ -113,10 +123,11 @@ const ConfirmPin = () => {
                         </div>
                     )}
 
-                    {/* PIN Boxes */}
                     <div className="flex justify-center gap-2 sm:gap-4 mt-6 mb-6">
                         {pin.map((digit, index) => (
                             <input
+                                onPaste={handlePaste}
+                                id={`pin-${index}`}
                                 key={index}
                                 type="text"
                                 maxLength="1"
@@ -128,7 +139,6 @@ const ConfirmPin = () => {
                         ))}
                     </div>
 
-                    {/* Continue Button */}
                     <button
                         type="submit"
                         disabled={loading}
@@ -137,7 +147,6 @@ const ConfirmPin = () => {
                         {loading ? "Verifying..." : "Continue"}
                     </button>
 
-                    {/* Back Link */}
                     <p className="text-center text-xs sm:text-sm mt-4 sm:mt-6 text-[#A3AED0]">
                         Back to{" "}
                         <Link to='/CreatePin' className="text-[#4318FF] font-semibold underline cursor-pointer">
@@ -147,7 +156,6 @@ const ConfirmPin = () => {
                 </form>
             </div>
 
-            {/* Mountains Image */}
             <img
                 src={mountainsImg}
                 alt="Mountains"
