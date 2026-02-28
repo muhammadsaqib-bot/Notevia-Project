@@ -1,13 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import mountainsImg from '../assets/Group.png';
-import logo from '../assets/Neografica.png';
-import bg from '../assets/bg.png';
+import logo from '../assets/Neografica.PNG';
 import Toaster from '../components/Toaster';
-import Notevia from './Notevia';
+import { API_BASE_URL } from "../API";
+import AuthLayout from '../components/AuthLayout';
 
-const API_BASE_URL = 'https://new-my-journals.vercel.app/';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -100,23 +98,14 @@ const SignIn = () => {
         <>
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
-            <div
-                className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center relative py-10"
-                style={{
-                    backgroundImage: `url(${bg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'right center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                }}
-            >
-                <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
+            <AuthLayout>
+                <div className="flex flex-col gap-6 relative z-10 w-full max-w-[502px] px-4">
                     <div className="flex justify-center items-center gap-2 ">
                         <img src={logo} alt="Logo" className="w-10 h-10" />
                         <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                     </div>
 
-                    <form onSubmit={handleLogin} className="rounded-2xl bg-white w-[502px] p-8">
+                    <form onSubmit={handleLogin} className="rounded-2xl bg-white w-full p-8">
                         <h2 className="font-[700] text-center text-[34px] font-bold text-[#1B2559]">Welcome back</h2>
                         <p className='text-[#A3AED0] text-center font-[500] text-[16px]'>Sign in to your account</p>
 
@@ -179,12 +168,6 @@ const SignIn = () => {
                         </p>
                     </form>
                 </div>
-
-                <img
-                    src={mountainsImg}
-                    alt="Mountains"
-                    className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
-                />
 
                 {forgotPasswordOpen && (
                     <div className="fixed inset-0 bg-gray-100 shadow-sm  bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -251,7 +234,7 @@ const SignIn = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            </AuthLayout>
         </>
     );
 };

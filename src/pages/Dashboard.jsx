@@ -1,8 +1,4 @@
-import noteviaLogo from "../assets/Neografica.PNG";
 import dashboard1 from "../assets/dashboardIcon.PNG";
-import journalIcon from "../assets/JournalIcon.PNG";
-import penIcon from "../assets/penIcon.PNG";
-import profileIcon from "../assets/profileIcon.PNG";
 import search from '../assets/Search Icon.PNG';
 import calendar from '../assets/calendar.PNG';
 import tabler from '../assets/tabler.PNG';
@@ -20,12 +16,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../components/Card";
 import Toaster from "../components/Toaster";
+import { API_BASE_URL } from "../API";
+import Sidebar from "../components/Sidebar";
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
-    const [name, setName] = useState("");
-    const [profilePic, setProfilePic] = useState(null);
+    const { name, profilePic, isVerifying } = useAuth();
     const [toastMsg, setToastMsg] = useState("");
     const [toastOpen, setToastOpen] = useState(false);
     const [journals, setJournals] = useState([]);
@@ -41,7 +37,6 @@ const Dashboard = () => {
     const [thisWeekCount, setThisWeekCount] = useState(0);
     const [writingStreak, setWritingStreak] = useState(0);
     const navigate = useNavigate();
-    const [isVerifying, setIsVerifying] = useState(true);
 
     const showToast = (msg) => {
         setToastMsg(msg);
@@ -49,35 +44,6 @@ const Dashboard = () => {
         setTimeout(() => setToastOpen(false), 2000);
     };
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate("/SignIn");
-                return;
-            }
-
-            try {
-                const response = await axios.get(`${API_BASE_URL}profiles/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                setName(response.data.full_name || "Guest");
-                setProfilePic(response.data.profile_picture || null);
-                setIsVerifying(false);
-            } catch (err) {
-                const status = err.response?.status;
-                if (status === 401) navigate("/ConfirmPin");
-                else {
-                    localStorage.removeItem("token");
-                    navigate("/SignIn");
-                }
-            }
-        };
-        fetchProfile();
-    }, [navigate]);
 
     useEffect(() => {
         const fetchJournals = async () => {
@@ -123,7 +89,7 @@ const Dashboard = () => {
             }
         };
         fetchJournals();
-    }, []);
+    }, [navigate]);
 
     const handleDelete = (deletedId) => {
         setJournals(prev => prev.filter(j => (j.id || j._id) !== deletedId));
@@ -146,54 +112,7 @@ const Dashboard = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
-            <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
-                <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
-                    <div className="flex items-center gap-4 pr-[35px]">
-                        <Link to='/Notevia' className="cursor-pointer">
-                            <img src={noteviaLogo} alt="" /></Link>
-                        <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
-                    </div>
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-2 text-[#1B2559]"
-                    >
-                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            {isMenuOpen
-                                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            }
-                        </svg>
-                    </button>
-                </div>
-
-                <div className='bg-[#4318FF] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3 '>
-                        <img className='h-[16px] w-[16px]' src={dashboard1} alt="" />
-                        <p className='text-[#FFF] font-[500] text-[16px] leading-[28px]'>Dashboard</p>
-                    </div>
-                </div>
-
-                <Link to='/Journals' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px] w-[17px]' src={journalIcon} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</p>
-                    </div>
-                </Link>
-
-                <Link to='/AddJournal' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px]' src={penIcon} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</p>
-                    </div>
-                </Link>
-
-                <Link to='/Profile' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px]' src={profileIcon} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Profile</p>
-                    </div>
-                </Link>
-            </div>
+            <Sidebar activePage="dashboard" />
             <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 md:mb-8">
                     <div>
@@ -213,7 +132,7 @@ const Dashboard = () => {
                             />
                         </div>
                         <img
-                            src={profilePic}
+                            src={profilePic || "https://via.placeholder.com/150"}
                             alt="Profile"
                             className="w-10 h-10 rounded-full object-cover border border-[#E6EDFF]"
                         />

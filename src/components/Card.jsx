@@ -3,13 +3,14 @@ import happyEmoji from '../assets/emoji.PNG';
 import sadEmoji from '../assets/sad.PNG';
 import neutralEmoji from '../assets/neutral.PNG';
 import Toaster from './Toaster';
-import { useNavigate } from 'react-router-dom';
-
-const API_BASE_URL = 'https://new-my-journals.vercel.app/';
+import { useNavigate, } from 'react-router-dom';
+import { API_BASE_URL } from "../API";
 
 const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, onDelete, onUpdate }) => {
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showViewBox, setShowViewBox] = useState(false);
 
     const [showEditForm, setShowEditForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -34,6 +35,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
     };
 
     const handleSave = async () => {
+        const token = localStorage.getItem("token");
         setIsSaving(true);
         const fd = new FormData();
         fd.append("title", formData.title);
@@ -41,11 +43,12 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
         fd.append("journalDate", formData.journalDate);
 
         try {
-            await fetch(`${API_BASE_URL}journals/${id}`, {
+            const res = await fetch(`${API_BASE_URL}journals/${id}`, {
                 method: "PATCH",
                 headers: { Authorization: `Bearer ${token}` },
                 body: fd,
             });
+            if (!res.ok) throw new Error("Failed");
             setToaster({ visible: true, message: "Journal updated successfully!" });
             setShowEditForm(false);
             if (onUpdate) onUpdate();
@@ -57,16 +60,21 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
     };
 
     const handleDelete = async () => {
+        const token = localStorage.getItem("token");
+        setIsDeleting(true);
         try {
-            await fetch(`${API_BASE_URL}journals/${id}`, {
+            const res = await fetch(`${API_BASE_URL}journals/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
+            if (!res.ok) throw new Error("Failed");
             setToaster({ visible: true, message: "Journal deleted successfully!" });
             setShowConfirm(false);
             onDelete(id);
         } catch (error) {
             setToaster({ visible: true, message: "Failed to delete journal." });
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -101,7 +109,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                             src={eye}
                             alt="view"
                             className="bg-[#F4F7FE] w-8 h-8 object-contain cursor-pointer p-1 rounded"
-                            onClick={() => navigate('/Notevia', { state: { journalId: id } })}
+                            onClick={() => setShowViewBox(true)}
                         />
                         <img
                             src={write}
@@ -109,8 +117,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                             className="bg-[#F4F7FE] w-8 h-8 object-contain cursor-pointer p-1 rounded"
                             onClick={() => setShowEditForm(!showEditForm)}
                         />
-
-                        {/* 🗑️ Delete */}
                         <img
                             src={del}
                             alt="delete"
@@ -144,6 +150,34 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                 )}
             </div>
 
+            {showViewBox && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 className="text-xl font-bold text-[#2B3674]">{title}</h3>
+                                <p className="text-sm text-[#A3AED0]">{date}</p>
+                            </div>
+                            <div className="flex items-center gap-2 bg-[#F4F7FE] px-3 py-1 rounded-full text-sm text-[#4318FF] font-medium">
+                                <img src={moodEmojis[mood] || emoji} alt="" className="w-4 h-4" />
+                                {mood}
+                            </div>
+                        </div>
+
+                        <div className="max-h-[300px] overflow-y-auto mb-6">
+                            <p className="text-[#1B2559] leading-relaxed whitespace-pre-wrap">{content}</p>
+                        </div>
+
+                        <button
+                            onClick={() => setShowViewBox(false)}
+                            className="w-full py-3 rounded-xl bg-[#4318FF] text-white font-semibold hover:bg-[#3311DD] transition-colors"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {showConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                     <div className="bg-white rounded-2xl p-6 w-[300px] shadow-xl text-center">
@@ -152,9 +186,27 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                             Are you sure you want to delete this journal? This action cannot be undone.
                         </p>
                         <div className="flex gap-3 justify-center">
-                            <button onClick={() => setShowConfirm(false)} className="px-5 py-2 rounded-lg border text-[#A3AED0] text-sm">Cancel</button>
-                            <button onClick={handleDelete} disabled={isDeleting} className="px-5 py-2 rounded-lg bg-red-500 text-white text-sm disabled:opacity-60">
-                                Delete
+                            <button
+                                onClick={() => setShowConfirm(false)}
+                                disabled={isDeleting}
+                                className="px-5 py-2 rounded-lg border text-[#A3AED0] text-sm disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="px-5 py-2 rounded-lg bg-red-500 text-white text-sm disabled:opacity-60 flex items-center gap-2"
+                            >
+                                {isDeleting ? (
+                                    <>
+                                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                        </svg>
+                                        Deleting...
+                                    </>
+                                ) : "Delete"}
                             </button>
                         </div>
                     </div>

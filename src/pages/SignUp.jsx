@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
 import { Link, useNavigate } from 'react-router-dom';
-import bg from '../assets/bg.PNG';
 import axios from 'axios';
-
-const API_BASE_URL = 'https://new-my-journals.vercel.app/';
+import { API_BASE_URL } from "../API";
+import AuthLayout from '../components/AuthLayout';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -56,27 +54,18 @@ const SignUp = () => {
     }
 
     return (
-        <div
-            className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center relative py-10"
-            style={{
-                backgroundImage: `url(${bg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'right center',
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-            }}
-        >
-            <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
-                <div className="max-[750px]:pl-0 pl-20 flex justify-center items-center gap-2 ">
+        <AuthLayout>
+            <div className="flex flex-col gap-6 relative z-10 w-full max-w-[502px] px-4">
+                <div className="flex justify-center items-center gap-2 ">
                     <img src={logo} alt="Logo" className="w-10 h-10" />
                     <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
-                <form onSubmit={SignUpSubmitted} className="max-[750px]:max-w-full rounded-2xl bg-white w-[502px] p-8">
+                <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-full p-8">
                     <h2 className="max-[750px]:text-[25px] text-center text-[34px] font-[700] text-[#1B2559]">
                         Create Account
                     </h2>
-                    <p className='max-[750px]:text-[12px] text-[#A3AED0] text-center font-[500] text-[16px]'>Start your jaournling journey</p>
+                    <p className='max-[750px]:text-[12px] text-[#A3AED0] text-center font-[500] text-[16px]'>Start your journaling journey</p>
 
 
                     {error && (
@@ -149,13 +138,7 @@ const SignUp = () => {
                     </p>
                 </form>
             </div>
-
-            <img
-                src={mountainsImg}
-                alt="Mountains"
-                className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
-            />
-        </div>
+        </AuthLayout>
     );
 };
 export default SignUp;

@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import mountainsImg from '../assets/Group.PNG';
 import logo from '../assets/Neografica.PNG';
-import bg from '../assets/bg.PNG';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Toaster from "../components/Toaster";
 import { Link } from "react-router-dom";
-
+import { API_BASE_URL } from "../API";
+import AuthLayout from '../components/AuthLayout';
 const ConfirmPin = () => {
-    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
     const [pin, setPin] = useState(["", "", "", ""]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -81,27 +79,8 @@ const ConfirmPin = () => {
     };
 
     return (
-        <div
-            className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
-            style={{
-                backgroundImage: `url(${bg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'right center',
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-            }}
-        >
+        <AuthLayout>
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
-
-            <div
-                className="absolute right-0 top-0 w-1/2 h-full hidden md:block"
-                style={{
-                    backgroundImage: `url(${bg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transform: 'rotate(180deg)',
-                }}
-            ></div>
 
             <div className="flex flex-col gap-6 sm:gap-10 relative z-10 w-full max-w-md px-4">
                 <div className="flex justify-center items-center gap-2">
@@ -129,7 +108,7 @@ const ConfirmPin = () => {
                                 onPaste={handlePaste}
                                 id={`pin-${index}`}
                                 key={index}
-                                type="text"
+                                type="number"
                                 maxLength="1"
                                 value={digit}
                                 onChange={(e) => handleChange(e.target.value, index)}
@@ -155,13 +134,7 @@ const ConfirmPin = () => {
                     </p>
                 </form>
             </div>
-
-            <img
-                src={mountainsImg}
-                alt="Mountains"
-                className="fixed bottom-5 sm:bottom-20 right-5 sm:right-20 w-1/3 sm:w-1/5 h-auto pointer-events-none"
-            />
-        </div>
+        </AuthLayout>
     );
 };
 

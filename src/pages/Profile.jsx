@@ -1,19 +1,13 @@
-import noteviaLogo from "../assets/Neografica.PNG";
-import dashboard1 from "../assets/dashboardIcon.PNG";
-import journalIcon from "../assets/JournalIcon.PNG";
-import penIcon from "../assets/penIcon.PNG";
-import profileIcon from "../assets/profileIcon.PNG";
-// import user from '../assets/user.PNG';
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../API";
 import Toaster from "../components/Toaster";
+import Sidebar from "../components/Sidebar";
 
 const Profile = () => {
-    const API_BASE_URL = 'https://new-my-journals.vercel.app/';
     const navigate = useNavigate();
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [fullName, setFullName] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [dob, setDob] = useState("");
@@ -203,7 +197,6 @@ const Profile = () => {
                             Change Password
                         </h2>
 
-                        {/* Current Password */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-[#2B3674] mb-2">
                                 Current Password
@@ -263,51 +256,8 @@ const Profile = () => {
                 </div>
             )}
 
-            <div className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 ${isMenuOpen ? 'h-auto pb-5' : 'h-[80px] overflow-hidden md:h-screen'}`}>
-                <div className='flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10'>
-                    <div className="flex items-center gap-4 pr-[35px]">
-                        <Link to='/Notevia' className="cursor-pointer">
-                            <img src={noteviaLogo} alt="" /></Link>
-                        <h2 className='font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]'>NOTEVIA</h2>
-                    </div>
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#1B2559]">
-                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            {isMenuOpen
-                                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            }
-                        </svg>
-                    </button>
-                </div>
+            <Sidebar activePage="profile" />
 
-                <Link to='/Dashboard1' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[16px] w-[16px]' src={dashboard1} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Dashboard</p>
-                    </div>
-                </Link>
-
-                <Link to='/Journals' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px] w-[17px]' src={journalIcon} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Journals</p>
-                    </div>
-                </Link>
-
-                <Link to='/AddJournal' className='hover:bg-[#F4F7FE] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px]' src={penIcon} alt="" />
-                        <p className='text-[#A3AED0] font-[500] text-[16px] leading-[28px]'>Add journal</p>
-                    </div>
-                </Link>
-
-                <div className='bg-[#4318FF] rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5'>
-                    <div className='flex items-center gap-3'>
-                        <img className='h-[20px]' src={profileIcon} alt="" />
-                        <p className='text-[#FFF] font-[500] text-[16px] leading-[28px]'>Profile</p>
-                    </div>
-                </div>
-            </div>
 
             <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6 sm:mb-8">
@@ -405,17 +355,17 @@ const Profile = () => {
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 flex-wrap">
+                    <div className="flex flex-col min-[768px]:flex-row justify-end gap-3">
                         <button
                             onClick={handleLogout}
-                            className="w-[174px] h-[50px] rounded-full border border-red-300 bg-[#F5E1E7] text-[16px] font-[500] hover:bg-red-50 transition-colors cursor-pointer text-[#FF1818]"
+                            className="w-full min-[768px]:w-[174px] h-[50px] rounded-full border border-red-300 bg-[#F5E1E7] text-[16px] font-[500] hover:bg-red-50 transition-colors cursor-pointer text-[#FF1818]"
                         >
                             Logout
                         </button>
 
                         <button
                             onClick={() => setShowPasswordModal(true)}
-                            className="w-[213px] h-[50px] rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-[500] hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A]"
+                            className="w-full min-[768px]:w-[213px] h-[50px] rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-[500] hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A]"
                         >
                             Change Password
                         </button>
@@ -423,7 +373,7 @@ const Profile = () => {
                         <button
                             onClick={handleSave}
                             disabled={loading}
-                            className="w-[174px] h-[50px] rounded-full bg-[#4318FF] text-white text-sm font-[500] hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full min-[768px]:w-[174px] h-[50px] rounded-full bg-[#4318FF] text-white text-sm font-[500] hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             {loading ? "Saving..." : "Save Changes"}
                         </button>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 const NotFound = () => {
     const canvasRef = useRef(null)
 
-    // Floating particles on canvas
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
@@ -65,7 +64,6 @@ const NotFound = () => {
                     position: relative;
                 }
 
-                /* Animated gradient orbs */
                 .orb {
                     position: fixed;
                     border-radius: 50%;
@@ -97,7 +95,6 @@ const NotFound = () => {
                     100% { transform: translate(40px, 30px) scale(1.08); }
                 }
 
-                /* Card */
                 .nf-card {
                     position: relative;
                     z-index: 10;
@@ -119,7 +116,6 @@ const NotFound = () => {
                     to   { opacity: 1; transform: translateY(0) scale(1); }
                 }
 
-                /* 404 */
                 .nf-number {
                     font-family: 'Syne', sans-serif;
                     font-size: 130px;
@@ -157,7 +153,6 @@ const NotFound = () => {
                     to   { opacity: 1; transform: scale(1); }
                 }
 
-                /* Floating astronaut */
                 .nf-astro {
                     font-size: 52px;
                     display: block;
@@ -176,7 +171,6 @@ const NotFound = () => {
                     to   { opacity: 1; transform: translateY(0); }
                 }
 
-                /* Text */
                 .nf-title {
                     font-family: 'Syne', sans-serif;
                     font-size: 24px;
@@ -194,7 +188,6 @@ const NotFound = () => {
                     animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both;
                 }
 
-                /* Divider dots */
                 .nf-dots {
                     display: flex;
                     gap: 6px;
@@ -213,7 +206,6 @@ const NotFound = () => {
                     border-radius: 3px;
                 }
 
-                /* Button */
                 .nf-btn {
                     display: block;
                     width: 100%;
@@ -238,7 +230,6 @@ const NotFound = () => {
                     transform: translateY(0);
                 }
 
-                /* Secondary link */
                 .nf-back {
                     display: inline-block;
                     margin-top: 16px;
@@ -250,7 +241,6 @@ const NotFound = () => {
                 }
                 .nf-back:hover { color: #4318FF; }
 
-                /* Error code tag */
                 .nf-tag {
                     display: inline-block;
                     background: #F0EFFE;
@@ -265,7 +255,6 @@ const NotFound = () => {
                     animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.35s both;
                 }
 
-                /* Canvas */
                 .nf-canvas {
                     position: fixed;
                     inset: 0;
@@ -275,15 +264,12 @@ const NotFound = () => {
             `}</style>
 
             <div className="nf-root">
-                {/* Orbs */}
                 <div className="orb orb-1" />
                 <div className="orb orb-2" />
                 <div className="orb orb-3" />
 
-                {/* Particles */}
                 <canvas ref={canvasRef} className="nf-canvas" />
 
-                {/* Card */}
                 <div className="nf-card">
 
                     <div className="nf-number">404</div>

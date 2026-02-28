@@ -1,12 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import mountainsImg from '../assets/Group.png'
-import logo from '../assets/Neografica.png'
-import bg from '../assets/bg.png'
+import logo from '../assets/Neografica.PNG';
 import Toaster from '../components/Toaster'
+import { API_BASE_URL } from "../API";
+import AuthLayout from '../components/AuthLayout';
 
-const API_BASE_URL = 'https://new-my-journals.vercel.app/'
 
 const VerifyAccount = () => {
     const { state } = useLocation();
@@ -71,6 +70,7 @@ const VerifyAccount = () => {
                 localStorage.setItem("token", res.data.token)
                 showToast('Account verified successfully 🎉')
                 setTimeout(() => navigate('/CreatePin'), 1500)
+            } else {
                 showToast(res.data.message || 'Invalid OTP')
             }
         } catch (err) {
@@ -94,16 +94,7 @@ const VerifyAccount = () => {
     }
 
     return (
-        <div
-            className="w-screen min-h-screen bg-[#F4F7FE] flex justify-center items-center relative overflow-hidden"
-            style={{
-                backgroundImage: `url(${bg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'right center',
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-            }}
-        >
+        <AuthLayout>
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
             <div className="flex flex-col gap-6 relative z-10 w-full max-w-md px-4">
@@ -149,13 +140,7 @@ const VerifyAccount = () => {
                     </p>
                 </form>
             </div>
-
-            <img
-                src={mountainsImg}
-                alt="Mountains"
-                className="fixed bottom-20 right-20 w-1/5 h-auto pointer-events-none"
-            />
-        </div>
+        </AuthLayout>
     )
 }
 
