@@ -32,9 +32,6 @@ const NoteviApp = () => {
   const [mood, setMood] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({ title: '', content: '', journalDate: '' });
   const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -79,11 +76,6 @@ const NoteviApp = () => {
           setDate(data.journal_date || "");
           setTags(data.tags || []);
           setJournalId(data.id || data._id);
-          setFormData({
-            title: data.title || '',
-            content: data.content || '',
-            journalDate: data.journal_date ? data.journal_date.split('T')[0] : '',
-          });
         }
 
         setIsVerifying(false);
@@ -105,32 +97,21 @@ const NoteviApp = () => {
     fetchData();
   }, [navigate, location]);
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const token = localStorage.getItem("token");
+  const handleEdit = () => {
     try {
-      const fd = new FormData();
-      fd.append("title", formData.title);
-      fd.append("content", formData.content);
-      fd.append("journalDate", formData.journalDate);
-
-      const res = await fetch(`${API_BASE_URL}journals/${journalId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
+      const numericDate = date ? new Date(date).toISOString().split('T')[0] : "";
+      navigate('/AddJournal', {
+        state: {
+          journalId: journalId,
+          title: title,
+          content: content,
+          date: numericDate,
+          mood: mood,
+          heading: "Update Journal"
+        }
       });
-
-      if (!res.ok) throw new Error("Failed");
-
-      setTitle(formData.title);
-      setContent(formData.content);
-      setDate(formData.journalDate);
-      showToast("Journal updated successfully!");
-      setShowEditForm(false);
     } catch (error) {
-      showToast("Failed to update journal.");
-    } finally {
-      setIsSaving(false);
+      console.log("Error : ", error);
     }
   };
 
@@ -138,10 +119,11 @@ const NoteviApp = () => {
     setIsDeleting(true);
     const token = localStorage.getItem("token");
     try {
-      await fetch(`${API_BASE_URL}journals/${journalId}`, {
+      const res = await fetch(`${API_BASE_URL}journals/${journalId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (!res.ok) throw new Error("Failed");
       showToast("Journal deleted successfully!");
       setTimeout(() => navigate("/Journals"), 1500);
     } catch (error) {
@@ -184,7 +166,7 @@ const NoteviApp = () => {
           </div>
           {journalId && <div className='flex gap-2'>
             <button
-              onClick={() => setShowEditForm(!showEditForm)}
+              onClick={handleEdit}
               className='flex items-center gap-2 px-4 py-2 rounded-[8px] bg-[#EDE8FF] text-[#4318FF] text-[14px] font-[600] hover:bg-[#e9edfc] transition-colors cursor-pointer'
             >
               <img src={edit} alt="" />
@@ -251,46 +233,6 @@ const NoteviApp = () => {
                 <img src={copy} alt="copy" />
               </button>
             </div>
-
-            {showEditForm && (
-              <div className="mt-4 flex flex-col gap-3 border-t pt-4">
-                <div>
-                  <label className="text-xs text-[#A3AED0]">Title</label>
-                  <input
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-[#A3AED0]">Content</label>
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    rows={5}
-                    className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-[#A3AED0]">Date</label>
-                  <input
-                    type="date"
-                    value={formData.journalDate}
-                    onChange={(e) => setFormData({ ...formData, journalDate: e.target.value })}
-                    className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]"
-                  />
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <button onClick={() => setShowEditForm(false)} className="px-4 py-2 text-sm rounded-lg border text-[#A3AED0]">
-                    Cancel
-                  </button>
-                  <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 text-sm rounded-lg bg-[#2B3674] text-white disabled:opacity-60">
-                    {isSaving ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              </div>
-            )}
-
           </div>
         )}
       </div>

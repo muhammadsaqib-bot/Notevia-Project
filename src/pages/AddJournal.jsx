@@ -6,24 +6,34 @@ import { API_BASE_URL } from "../API";
 import useAuth from "../hooks/useAuth";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Toaster from "../components/Toaster";
 import Sidebar from "../components/Sidebar";
 
 const AddJournal = () => {
+    const location = useLocation();
+    const Journal_data = location.state;
+
+    const token = localStorage.getItem('token');
+
+
+
     const { name, profilePic, isVerifying } = useAuth();
     const navigate = useNavigate();
-    const [selectedMood, setSelectedMood] = useState("Calm");
-    const [title, setTitle] = useState("");
+    const [selectedMood, setSelectedMood] = useState(Journal_data?.mood || "Calm");
+    const [title, setTitle] = useState(Journal_data?.title || "");
 
-    const [date, setDate] = useState("");
-    const [entry, setEntry] = useState("");
+    const [date, setDate] = useState(Journal_data?.date || "");
+    const [entry, setEntry] = useState(Journal_data?.content || "");
     const [loading, setLoading] = useState(false);
+    const [isCreatingNew, setIsCreatingNew] = useState(false);
     const [error, setError] = useState("");
     const [toastMsg, setToastMsg] = useState("");
     const [toastOpen, setToastOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const fileInputRef = useRef(null);
+
+
 
     const showToast = (msg) => {
         setToastMsg(msg);
@@ -60,10 +70,13 @@ const AddJournal = () => {
         }
 
         setError("");
-        setLoading(true);
+        if (Journal_data?.heading) {
+            setIsCreatingNew(true);
+        } else {
+            setLoading(true);
+        }
 
         try {
-            const token = localStorage.getItem('token');
 
             const formData = new FormData();
             formData.append("title", title);
@@ -99,8 +112,42 @@ const AddJournal = () => {
             setError(msg);
         } finally {
             setLoading(false);
+            setIsCreatingNew(false);
         }
     };
+
+
+    const UpdateJournal = async () => {
+        try {
+            setLoading(false)
+            if (!token) {
+                return
+            }
+
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("content", entry.trim());
+            formData.append("journalDate", new Date(date).toISOString());
+            formData.append("mood", selectedMood);
+            if (selectedFile) {
+                formData.append("files", selectedFile);
+            }
+
+            const res_update = await axios.patch(`${API_BASE_URL}journals/${Journal_data.journalId}`, formData, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            showToast("Journal updated successfully!");
+            setTimeout(() => navigate("/Journals"), 1500);
+        } catch (error) {
+            console.log("Error : ", error)
+        }
+        finally {
+        }
+    }
+    const onSaveButtonClick = Journal_data?.heading ? UpdateJournal : handleSave;
 
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
@@ -125,7 +172,7 @@ const AddJournal = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
-                    <h2 className="text-lg font-semibold text-[#2B3674] mb-6">New Journal</h2>
+                    <h2 className="text-lg font-semibold text-[#2B3674] mb-6">{Journal_data?.heading ?? "Add Journal"}</h2>
 
                     {error && (
                         <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-6 text-sm">
@@ -221,8 +268,17 @@ const AddJournal = () => {
                         >
                             Cancel
                         </button>
+                        {Journal_data?.heading && (
+                            <button
+                                onClick={handleSave}
+                                disabled={loading || isCreatingNew}
+                                className="w-full min-[300px]:w-auto px-6 py-3 rounded-full border border-[#4318FF] text-[#4318FF] text-sm font-medium hover:bg-[#F0EFFE] transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                                {isCreatingNew ? "Creating..." : "Create New Instead"}
+                            </button>
+                        )}
                         <button
-                            onClick={handleSave}
+                            onClick={onSaveButtonClick}
                             disabled={loading}
                             className="w-full min-[300px]:w-auto px-6 py-3 rounded-full bg-[#4318FF] text-white text-sm font-semibold hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-50"
                         >

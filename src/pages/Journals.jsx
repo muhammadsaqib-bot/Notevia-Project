@@ -36,8 +36,6 @@ const Journals = () => {
         setTimeout(() => setToastOpen(false), 2000);
     };
 
-
-
     useEffect(() => {
         const fetchJournals = async () => {
             const token = localStorage.getItem('token');

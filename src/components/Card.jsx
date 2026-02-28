@@ -12,7 +12,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
     const [isDeleting, setIsDeleting] = useState(false);
     const [showViewBox, setShowViewBox] = useState(false);
 
-    const [showEditForm, setShowEditForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [toaster, setToaster] = useState({ visible: false, message: '' });
     const [isSaving, setIsSaving] = useState(false);
@@ -50,7 +49,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
             });
             if (!res.ok) throw new Error("Failed");
             setToaster({ visible: true, message: "Journal updated successfully!" });
-            setShowEditForm(false);
             if (onUpdate) onUpdate();
         } catch (error) {
             setToaster({ visible: true, message: "Failed to update journal." });
@@ -77,6 +75,26 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
             setIsDeleting(false);
         }
     };
+
+    const EditJournal = async () => {
+        try {
+            const numericDate = date ? new Date(date).toISOString().split('T')[0] : "";
+            console.log(numericDate);
+
+            navigate('/AddJournal', {
+                state: {
+                    journalId: id,
+                    title: title,
+                    content: content,
+                    date: numericDate,
+                    mood: mood,
+                    heading: "Update Journal"
+                }
+            });
+        } catch (error) {
+            console.log("Error : ", error)
+        }
+    }
 
     return (
         <div className="w-full">
@@ -114,8 +132,9 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                         <img
                             src={write}
                             alt="edit"
+
                             className="bg-[#F4F7FE] w-8 h-8 object-contain cursor-pointer p-1 rounded"
-                            onClick={() => setShowEditForm(!showEditForm)}
+                            onClick={EditJournal}
                         />
                         <img
                             src={del}
@@ -125,29 +144,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                         />
                     </div>
                 </div>
-
-                {showEditForm && (
-                    <div className="mt-4 flex flex-col gap-3 border-t pt-4">
-                        <div>
-                            <label className="text-xs text-[#A3AED0]">Title</label>
-                            <input name="title" value={formData.title} onChange={handleChange} className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]" />
-                        </div>
-                        <div>
-                            <label className="text-xs text-[#A3AED0]">Content</label>
-                            <textarea name="content" value={formData.content} onChange={handleChange} rows={3} className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]" />
-                        </div>
-                        <div>
-                            <label className="text-xs text-[#A3AED0]">Date</label>
-                            <input type="date" name="journalDate" value={formData.journalDate} onChange={handleChange} className="w-full border rounded-lg p-2 text-sm mt-1 outline-none focus:border-[#4318FF]" />
-                        </div>
-                        <div className="flex gap-2 justify-end">
-                            <button onClick={() => setShowEditForm(false)} className="px-4 py-2 text-sm rounded-lg border text-[#A3AED0]">Cancel</button>
-                            <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 text-sm rounded-lg bg-[#2B3674] text-white disabled:opacity-60">
-                                {isSaving ? "Saving..." : "Save"}
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
 
             {showViewBox && (

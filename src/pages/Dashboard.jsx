@@ -101,6 +101,24 @@ const Dashboard = () => {
         return j.title?.toLowerCase().includes(query) || j.content?.toLowerCase().includes(query);
     });
 
+    const handleEdit = (journal) => {
+        try {
+            const numericDate = journal.journal_date ? new Date(journal.journal_date).toISOString().split('T')[0] : "";
+            navigate('/AddJournal', {
+                state: {
+                    journalId: journal.id || journal._id,
+                    title: journal.title,
+                    content: journal.content,
+                    date: numericDate,
+                    mood: journal.mood,
+                    heading: "Update Journal"
+                }
+            });
+        } catch (error) {
+            console.log("Error : ", error);
+        }
+    };
+
     if (isVerifying) {
         return (
             <div className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center">
@@ -224,6 +242,7 @@ const Dashboard = () => {
                                     write={write}
                                     del={del}
                                     onDelete={handleDelete}
+                                    onUpdate={() => handleEdit(journal)}
                                 />
                             ))
                         )}
