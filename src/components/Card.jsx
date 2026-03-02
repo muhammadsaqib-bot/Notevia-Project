@@ -6,12 +6,10 @@ import Toaster from './Toaster';
 import { useNavigate, } from 'react-router-dom';
 import { API_BASE_URL } from "../API";
 
-const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, onDelete, onUpdate }) => {
+const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, onDelete, onUpdate, media }) => {
     const navigate = useNavigate();
 
     const [isDeleting, setIsDeleting] = useState(false);
-    const [showViewBox, setShowViewBox] = useState(false);
-
     const [showConfirm, setShowConfirm] = useState(false);
     const [toaster, setToaster] = useState({ visible: false, message: '' });
     const [isSaving, setIsSaving] = useState(false);
@@ -79,8 +77,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
     const EditJournal = async () => {
         try {
             const numericDate = date ? new Date(date).toISOString().split('T')[0] : "";
-            console.log(numericDate);
-
             navigate('/AddJournal', {
                 state: {
                     journalId: id,
@@ -96,8 +92,22 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
         }
     }
 
+    const handleView = () => {
+        navigate('/ShowInfo', {
+            state: {
+                journalId: id,
+                title: title || formData.title,
+                content: content || formData.content,
+                date: date || formData.journalDate,
+                mood: mood || "",
+                tags: tags,
+                media: media || [],
+            }
+        });
+    };
+
     return (
-        <div className="w-full">
+        <div className="w-full relative">
             <div className="bg-white p-4 md:p-6 rounded-2xl mb-4 shadow-sm h-full">
 
                 <div className="flex justify-between mb-2 flex-wrap gap-2">
@@ -111,11 +121,11 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                     </div>
                 </div>
 
-                <p className="text-sm text-[#A3AED0] mb-2">
+                <p className="text-sm text-[#A3AED0] mb-6">
                     "{content?.substring(0, 60)}..."
                 </p>
 
-                <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex justify-between items-center flex-wrap gap-2 absolute right-[5%] bottom-[9%]">
                     <div className="flex gap-2 text-xs text-[#A3AED0] flex-wrap">
                         {tags?.map((tag, index) => (
                             <span key={index} className="bg-[#F4F7FE] px-2 py-1 rounded-full">{tag}</span>
@@ -127,12 +137,11 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                             src={eye}
                             alt="view"
                             className="bg-[#F4F7FE] w-8 h-8 object-contain cursor-pointer p-1 rounded"
-                            onClick={() => setShowViewBox(true)}
+                            onClick={handleView}
                         />
                         <img
                             src={write}
                             alt="edit"
-
                             className="bg-[#F4F7FE] w-8 h-8 object-contain cursor-pointer p-1 rounded"
                             onClick={EditJournal}
                         />
@@ -145,34 +154,6 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                     </div>
                 </div>
             </div>
-
-            {showViewBox && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 className="text-xl font-bold text-[#2B3674]">{title}</h3>
-                                <p className="text-sm text-[#A3AED0]">{date}</p>
-                            </div>
-                            <div className="flex items-center gap-2 bg-[#F4F7FE] px-3 py-1 rounded-full text-sm text-[#4318FF] font-medium">
-                                <img src={moodEmojis[mood] || emoji} alt="" className="w-4 h-4" />
-                                {mood}
-                            </div>
-                        </div>
-
-                        <div className="max-h-[300px] overflow-y-auto mb-6">
-                            <p className="text-[#1B2559] leading-relaxed whitespace-pre-wrap">{content}</p>
-                        </div>
-
-                        <button
-                            onClick={() => setShowViewBox(false)}
-                            className="w-full py-3 rounded-xl bg-[#4318FF] text-white font-semibold hover:bg-[#3311DD] transition-colors"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {showConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

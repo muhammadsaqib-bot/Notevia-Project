@@ -1,6 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SignUp from './pages/SignUp.jsx'
 import SignIn from './pages/SignIn.jsx'
 import Dashboard from './pages/Dashboard.jsx'
@@ -12,10 +11,16 @@ import Journals from './pages/Journals.jsx'
 import AddJournal from './pages/AddJournal.jsx'
 import Profile from './pages/Profile.jsx'
 import ConfirmPin from './pages/ConfirmPin.jsx'
+import ShowInfo from './pages/ShowInfo.jsx'
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   return token ? children : <Navigate to="/SignIn" />;
+};
+
+const LinkOnlyRoute = ({ children }) => {
+  const location = useLocation();
+  return location.key !== "default" ? children : <Navigate to="/Dashboard1" />;
 };
 
 const App = () => {
@@ -32,6 +37,7 @@ const App = () => {
       <Route path="/ConfirmPin" element={<ProtectedRoute><ConfirmPin /></ProtectedRoute>} />
       <Route path="/AddJournal" element={<ProtectedRoute><AddJournal /></ProtectedRoute>} />
       <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/ShowInfo" element={<LinkOnlyRoute><ShowInfo /></LinkOnlyRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

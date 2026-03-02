@@ -23,7 +23,7 @@ const AddJournal = () => {
     const [selectedMood, setSelectedMood] = useState(Journal_data?.mood || "Calm");
     const [title, setTitle] = useState(Journal_data?.title || "");
 
-    const [date, setDate] = useState(Journal_data?.date || "");
+    const [date, setDate] = useState(Journal_data?.date || new Date().toISOString().split('T')[0]);
     const [entry, setEntry] = useState(Journal_data?.content || "");
     const [loading, setLoading] = useState(false);
     const [isCreatingNew, setIsCreatingNew] = useState(false);

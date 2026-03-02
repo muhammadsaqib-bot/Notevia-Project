@@ -10,8 +10,7 @@ import { API_BASE_URL } from "../API";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar';
 
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Journals = () => {
@@ -23,7 +22,10 @@ const Journals = () => {
     const [journals, setJournals] = useState([]);
     const [journalsLoading, setJournalsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState(null); // null = no search active
+    const [searchLoading, setSearchLoading] = useState(false);
     const navigate = useNavigate();
+    const debounceTimer = useRef(null);
 
     const showToast = (msg) => {
         setToastMsg(msg);
@@ -32,6 +34,9 @@ const Journals = () => {
 
     const handleDelete = (deletedId) => {
         setJournals(prev => prev.filter(j => (j.id || j._id) !== deletedId));
+        if (searchResults !== null) {
+            setSearchResults(prev => prev.filter(j => (j.id || j._id) !== deletedId));
+        }
         showToast("Journal deleted successfully");
         setTimeout(() => setToastOpen(false), 2000);
     };
@@ -47,13 +52,10 @@ const Journals = () => {
                     params: { page: 1, limit: 100 },
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                console.log(response);
-
                 const list = response.data.data || [];
                 setJournals(list);
             } catch (err) {
                 if (err.response?.status === 401) {
-                    // Sirf 401 pe logout karo
                     showToast("Session expired. Please login again.");
                     setTimeout(() => {
                         localStorage.removeItem("token");
@@ -61,7 +63,6 @@ const Journals = () => {
                     }, 1500);
                     return;
                 }
-                // Baaki errors pe sirf message dikhao, logout mat karo
                 showToast("Failed to load data. Please refresh.");
             } finally {
                 setJournalsLoading(false);
@@ -71,15 +72,50 @@ const Journals = () => {
         fetchJournals();
     }, [navigate]);
 
+    // Debounce search - 2 second wait
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+        if (!value.trim()) {
+            setSearchResults(null); // reset to normal journals
+            setSearchLoading(false);
+            return;
+        }
+
+        // Show loader immediately
+        setSearchLoading(true);
+
+        debounceTimer.current = setTimeout(async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            try {
+                const res = await axios.get(`${API_BASE_URL}journals`, {
+                    params: { search: value },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                setSearchResults(res.data.data || []);
+            } catch (err) {
+                showToast("Search failed. Try again.");
+                setSearchResults([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 2000);
+    };
+
+    // Date & mood filter — only apply on normal journals (when no search)
     const filteredJournals = journals.filter((j) => {
-        const matchesSearch = searchQuery
-            ? j.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            j.content?.toLowerCase().includes(searchQuery.toLowerCase())
-            : true;
         const matchesDate = date ? j.journal_date?.startsWith(date) : true;
         const matchesMood = selectedMood !== "All Mood" ? j.mood === selectedMood : true;
-        return matchesSearch && matchesDate && matchesMood;
+        return matchesDate && matchesMood;
     });
+
+    // What to show in the grid
+    const displayList = searchResults !== null ? searchResults : filteredJournals;
 
     if (isVerifying) {
         return (
@@ -127,9 +163,12 @@ const Journals = () => {
                             <input
                                 placeholder="Search"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={handleSearchChange}
                                 className="outline-none text-sm w-full h-[36px]"
                             />
+                            {searchLoading && (
+                                <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>
+                            )}
                         </div>
                         <img
                             src={profilePic || "https://via.placeholder.com/150"}
@@ -139,24 +178,40 @@ const Journals = () => {
                     </div>
                 </div>
 
-                <h2 className="text-lg font-semibold text-[#2B3674] mb-4">
-                    Recent Journals
-                </h2>
+                <div className="flex items-center gap-3 mb-4">
+                    <h2 className="text-lg font-semibold text-[#2B3674]">
+                        {searchResults !== null ? "Search Results" : "Recent Journals"}
+                    </h2>
+                    {searchResults !== null && !searchLoading && (
+                        <span className="text-xs bg-[#E9E6FF] text-[#4318FF] px-2 py-1 rounded-full font-medium">
+                            {searchResults.length} found
+                        </span>
+                    )}
+                </div>
 
                 {journalsLoading ? (
                     <div className="flex justify-center items-center py-20">
                         <div className="w-8 h-8 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
                     </div>
-                ) : filteredJournals.length === 0 ? (
+                ) : searchLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-3">
+                        <div className="w-10 h-10 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-sm text-[#A3AED0]">Searching journals...</p>
+                    </div>
+                ) : displayList.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-[#A3AED0]">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <p className="text-sm">No journals found.</p>
+                        <p className="text-sm">
+                            {searchResults !== null
+                                ? `No journals found for "${searchQuery}"`
+                                : "No journals found."}
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                        {filteredJournals.map((journal) => (
+                        {displayList.map((journal) => (
                             <Card
                                 key={journal.id || journal._id}
                                 id={journal.id || journal._id}
@@ -170,6 +225,7 @@ const Journals = () => {
                                 write={write}
                                 del={del}
                                 onDelete={handleDelete}
+                                media={journal.media}
                             />
                         ))}
                     </div>

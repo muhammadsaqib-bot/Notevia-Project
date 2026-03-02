@@ -14,7 +14,6 @@ const Profile = () => {
     const [bio, setBio] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
     const [previewPic, setPreviewPic] = useState(null);
-    const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [isVerifying, setIsVerifying] = useState(true);
 
@@ -50,7 +49,6 @@ const Profile = () => {
                 setDisplayName(response.data.full_name || "");
                 setBio(response.data.bio || "");
                 setDob(response.data.date_of_birth || "");
-                setEmail(response.data.email || response.data.user?.email || "");
                 if (response.data.profile_picture) {
                     setPreviewPic(response.data.profile_picture);
                 }
@@ -324,24 +322,14 @@ const Profile = () => {
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Email</label>
+                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Date of Birth</label>
                             <input
-                                type="text"
-                                value={email}
-                                readOnly
-                                className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#A3AED0] outline-none cursor-not-allowed opacity-70"
+                                type="date"
+                                value={dob}
+                                onChange={(e) => setDob(e.target.value)}
+                                className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#2B3674] outline-none focus:border-[#4318FF] transition-colors"
                             />
                         </div>
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Date of Birth</label>
-                        <input
-                            type="date"
-                            value={dob}
-                            onChange={(e) => setDob(e.target.value)}
-                            className="w-full bg-[#F4F7FE] border border-[#E6EDFF] rounded-xl px-4 py-3 text-sm text-[#2B3674] outline-none focus:border-[#4318FF] transition-colors"
-                        />
                     </div>
 
                     <div className="mb-8">

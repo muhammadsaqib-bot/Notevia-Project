@@ -12,7 +12,7 @@ import del from '../assets/delete.PNG';
 import write from '../assets/write.PNG';
 import eye from '../assets/eye.PNG';
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Card from "../components/Card";
 import Toaster from "../components/Toaster";
@@ -33,10 +33,13 @@ const Dashboard = () => {
         { name: "Sad", percent: "0%" }
     ]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+    const [searchLoading, setSearchLoading] = useState(false);
     const [totalJournals, setTotalJournals] = useState(0);
     const [thisWeekCount, setThisWeekCount] = useState(0);
     const [writingStreak, setWritingStreak] = useState(0);
     const navigate = useNavigate();
+    const debounceTimer = useRef(null);
 
     const showToast = (msg) => {
         setToastMsg(msg);
@@ -44,6 +47,37 @@ const Dashboard = () => {
         setTimeout(() => setToastOpen(false), 2000);
     };
 
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+        if (!value.trim()) {
+            setSearchResults(null);
+            setSearchLoading(false);
+            return;
+        }
+
+        setSearchLoading(true);
+
+        debounceTimer.current = setTimeout(async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            try {
+                const res = await axios.get(`${API_BASE_URL}journals`, {
+                    params: { search: value },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setSearchResults(res.data.data || []);
+            } catch (err) {
+                showToast("Search failed. Try again.");
+                setSearchResults([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 2000);
+    };
 
     useEffect(() => {
         const fetchJournals = async () => {
@@ -96,11 +130,6 @@ const Dashboard = () => {
         setTotalJournals(prev => prev - 1);
     };
 
-    const filteredJournals = journals.filter(j => {
-        const query = searchQuery.toLowerCase();
-        return j.title?.toLowerCase().includes(query) || j.content?.toLowerCase().includes(query);
-    });
-
     const handleEdit = (journal) => {
         try {
             const numericDate = journal.journal_date ? new Date(journal.journal_date).toISOString().split('T')[0] : "";
@@ -140,15 +169,20 @@ const Dashboard = () => {
                         </h1>
                     </div>
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mt-4 lg:mt-0 w-full lg:w-auto">
+                        {/* Search Box with Dropdown */}
                         <div className="bg-white px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm w-full sm:w-auto">
                             <img src={search} alt="" className="w-4 h-4 object-contain cursor-pointer" />
                             <input
                                 placeholder="Search"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={handleSearchChange}
                                 className="outline-none text-sm w-full sm:w-[240px] h-[36px]"
                             />
+                            {searchLoading && (
+                                <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>
+                            )}
                         </div>
+
                         <img
                             src={profilePic || "https://via.placeholder.com/150"}
                             alt="Profile"
@@ -156,9 +190,9 @@ const Dashboard = () => {
                         />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white">
-                        <div className="flex gap-3 md:gap-5 items-center">
+                <div className="flex flex-wrap gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
+                        <div className="flex gap-3 md:gap-5 items-center w-full">
                             <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
                                 <img src={dashboard1} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
                             </div>
@@ -169,8 +203,8 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="hidden xl:block" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white">
-                        <div className="flex gap-3 md:gap-5 items-center">
+                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
+                        <div className="flex gap-3 md:gap-5 items-center w-full">
                             <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
                                 <img src={calendar} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
                             </div>
@@ -181,8 +215,8 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="hidden xl:block" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white">
-                        <div className="flex gap-3 md:gap-5 items-center">
+                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
+                        <div className="flex gap-3 md:gap-5 items-center w-full">
                             <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-[#F4F7FE]">
                                 <img src={tabler} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
                             </div>
@@ -193,8 +227,8 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="hidden xl:block" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden">
-                        <div className="flex gap-3 md:gap-5 items-center">
+                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden flex-1 min-w-[240px]">
+                        <div className="flex gap-3 md:gap-5 items-center w-full">
                             <div>
                                 <p className="text-sm opacity-80 text-white">Mood This Week</p>
                                 <h3 className="text-lg md:text-xl font-bold text-white">
@@ -216,38 +250,85 @@ const Dashboard = () => {
                         View All Journals
                     </Link>
                 </div>
-                <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+                <div className="flex flex-col min-[1500px]:flex-row gap-4 lg:gap-8">
                     <div className="flex-1">
-                        <h2 className="text-lg font-semibold text-[#2B3674] mb-4">Recent Journals</h2>
+                        <div className="flex items-center gap-3 mb-4">
+                            <h2 className="text-lg font-semibold text-[#2B3674]">
+                                {searchResults !== null ? `Search Results` : "Recent Journals"}
+                            </h2>
+                            {searchResults !== null && !searchLoading && (
+                                <span className="text-xs bg-[#E9E6FF] text-[#4318FF] px-2 py-1 rounded-full font-medium">
+                                    {searchResults.length} found
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Journal loading (initial page load) */}
                         {journalsLoading ? (
                             <div className="flex justify-center py-10">
                                 <div className="w-8 h-8 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
                             </div>
-                        ) : filteredJournals.length === 0 ? (
-                            <div className="bg-white p-6 rounded-2xl text-center text-[#A3AED0]">
-                                <p>No journals found.</p>
+                        ) : searchLoading ? (
+                            // Search in progress - show shimmer/spinner
+                            <div className="flex flex-col items-center justify-center py-16 gap-3">
+                                <div className="w-10 h-10 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-sm text-[#A3AED0]">Searching journals...</p>
                             </div>
+                        ) : searchResults !== null ? (
+                            // Search done - show results
+                            searchResults.length === 0 ? (
+                                <div className="bg-white p-6 rounded-2xl text-center text-[#A3AED0]">
+                                    <p>No journals found for "<span className="font-medium text-[#4318FF]">{searchQuery}</span>"</p>
+                                </div>
+                            ) : (
+                                searchResults.map((journal) => (
+                                    <Card
+                                        key={journal.id || journal._id}
+                                        id={journal.id || journal._id}
+                                        title={journal.title}
+                                        date={journal.journal_date ? new Date(journal.journal_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
+                                        mood={journal.mood}
+                                        content={journal.content}
+                                        tags={journal.tags}
+                                        emoji={emoji}
+                                        eye={eye}
+                                        write={write}
+                                        del={del}
+                                        onDelete={handleDelete}
+                                        onUpdate={() => handleEdit(journal)}
+                                        media={journal.media}
+                                    />
+                                ))
+                            )
                         ) : (
-                            filteredJournals.map((journal) => (
-                                <Card
-                                    key={journal.id || journal._id}
-                                    id={journal.id || journal._id}
-                                    title={journal.title}
-                                    date={journal.journal_date ? new Date(journal.journal_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
-                                    mood={journal.mood}
-                                    content={journal.content}
-                                    tags={journal.tags}
-                                    emoji={emoji}
-                                    eye={eye}
-                                    write={write}
-                                    del={del}
-                                    onDelete={handleDelete}
-                                    onUpdate={() => handleEdit(journal)}
-                                />
-                            ))
+                            // Normal journals (no search)
+                            journals.length === 0 ? (
+                                <div className="bg-white p-6 rounded-2xl text-center text-[#A3AED0]">
+                                    <p>No journals found.</p>
+                                </div>
+                            ) : (
+                                journals.map((journal) => (
+                                    <Card
+                                        key={journal.id || journal._id}
+                                        id={journal.id || journal._id}
+                                        title={journal.title}
+                                        date={journal.journal_date ? new Date(journal.journal_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
+                                        mood={journal.mood}
+                                        content={journal.content}
+                                        tags={journal.tags}
+                                        emoji={emoji}
+                                        eye={eye}
+                                        write={write}
+                                        del={del}
+                                        onDelete={handleDelete}
+                                        onUpdate={() => handleEdit(journal)}
+                                        media={journal.media}
+                                    />
+                                ))
+                            )
                         )}
                     </div>
-                    <div className="w-full lg:w-80">
+                    <div className="w-full min-[1500px]:w-80">
                         <h3 className="text-lg font-semibold text-[#2B3674] mb-4">Mood Summary</h3>
                         <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
                             {moodStats.map((item, i) => (
