@@ -99,20 +99,20 @@ const SignIn = () => {
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
             <AuthLayout>
-                <div className="flex flex-col gap-6 relative z-10 w-full max-w-[502px] px-4">
+                <div className="flex flex-col gap-6 relative z-10 w-full max-w-125.5x-4">
                     <div className="flex justify-center items-center gap-2 ">
                         <img src={logo} alt="Logo" className="w-10 h-10" />
                         <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                     </div>
 
                     <form onSubmit={handleLogin} className="rounded-2xl bg-white w-full p-8">
-                        <h2 className="font-[700] text-center text-[34px] font-bold text-[#1B2559]">Welcome back</h2>
-                        <p className='text-[#A3AED0] text-center font-[500] text-[16px]'>Sign in to your account</p>
+                        <h2 className="font-boldtext-center text-[34px] text-[#1B2559]">Welcome back</h2>
+                        <p className='text-[#A3AED0] text-center font-medium text-[16px]'>Sign in to your account</p>
 
                         {error && <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">{error}</div>}
 
                         <label className="block mt-4">
-                            <p className="font-[400] text-[16px] leading-[28px] text-[#1B2559]">Email</p>
+                            <p className="font-normal text-[16px] leading-7 text-[#1B2559]">Email</p>
                             <input
                                 type="email"
                                 value={email}
@@ -123,7 +123,7 @@ const SignIn = () => {
                         </label>
 
                         <label className="block mt-4">
-                            <p className=" font-[400] text-[16px] leading-[28px] text-[#1B2559]">Password</p>
+                            <p className=" font-normal text-[16px] leading-7 text-[#1B2559]">Password</p>
                             <input
                                 type="password"
                                 value={password}
@@ -136,7 +136,7 @@ const SignIn = () => {
                         <div className="flex justify-between mt-2">
                             <div className="flex gap-2 items-center">
                                 <input type="radio" />
-                                <p className='text-[#1B2559] text-[14px] font-[400]'>Remember Me</p>
+                                <p className='text-[#1B2559] text-[14px] font-normal'>Remember Me</p>
                             </div>
                             <button
                                 type="button"
@@ -148,7 +148,7 @@ const SignIn = () => {
                                     setOtp('');
                                     setNewPassword('');
                                 }}
-                                className="cursor-pointer text-[#4318FF] text-[14px] font-[400]"
+                                className="cursor-pointer text-[#4318FF] text-[14px] font-normal"
                             >
                                 Forgot Password?
                             </button>
