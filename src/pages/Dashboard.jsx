@@ -190,57 +190,59 @@ const Dashboard = () => {
                         />
                     </div>
                 </div>
-                <div className="flex flex-wrap gap-4 md:gap-6 mb-6 md:mb-8">
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
-                        <div className="flex gap-3 md:gap-5 items-center w-full">
-                            <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
-                                <img src={dashboard1} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
+
+                {/* Stats Card - Fixed Equal Width */}
+                <div className="flex flex-wrap justify-start gap-4 mb-6 md:mb-8">
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                        <div className="flex gap-3 items-center">
+                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
+                                <img src={dashboard1} alt="" className="w-5 h-5 object-contain" />
                             </div>
                             <div>
-                                <p className="text-sm text-[#A3AED0]">Total Journals</p>
-                                <h3 className="text-lg md:text-xl font-bold text-[#1B2559]">{totalJournals}</h3>
+                                <p className="text-xs text-[#A3AED0]">Total Journals</p>
+                                <h3 className="text-xl font-bold text-[#1B2559]">{totalJournals}</h3>
                             </div>
                         </div>
-                        <img src={graph} alt="" className="hidden xl:block" />
+                        <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
-                        <div className="flex gap-3 md:gap-5 items-center w-full">
-                            <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
-                                <img src={calendar} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                        <div className="flex gap-3 items-center">
+                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
+                                <img src={calendar} alt="" className="w-5 h-5 object-contain" />
                             </div>
                             <div>
-                                <p className="text-sm text-[#A3AED0]">This Week</p>
-                                <h3 className="text-lg md:text-xl font-bold text-[#1B2559]">{thisWeekCount.toString().padStart(2, '0')}</h3>
+                                <p className="text-xs text-[#A3AED0]">This Week</p>
+                                <h3 className="text-xl font-bold text-[#1B2559]">{thisWeekCount.toString().padStart(2, '0')}</h3>
                             </div>
                         </div>
-                        <img src={graph} alt="" className="hidden xl:block" />
+                        <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-white flex-1 min-w-[240px]">
-                        <div className="flex gap-3 md:gap-5 items-center w-full">
-                            <div className="shrink-0 rounded-4xl w-10 md:w-12 h-10 md:h-12 flex justify-center items-center bg-[#F4F7FE]">
-                                <img src={tabler} alt="" className="w-4 md:w-6 h-4 md:h-6 object-contain" />
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                        <div className="flex gap-3 items-center">
+                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-[#EFF4FB]">
+                                <img src={tabler} alt="" className="w-5 h-5 object-contain" />
                             </div>
                             <div>
-                                <p className="text-sm text-[#A3AED0]">Writing Streak</p>
-                                <h3 className="text-lg md:text-xl font-bold text-[#1B2559]">{writingStreak} Days</h3>
+                                <p className="text-xs text-[#A3AED0]">Writing Streak</p>
+                                <h3 className="text-xl font-bold text-[#1B2559]">{writingStreak} Days</h3>
                             </div>
                         </div>
-                        <img src={graph} alt="" className="hidden xl:block" />
+                        <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-6 rounded-2xl flex items-center justify-between shadow-sm bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden flex-1 min-w-[240px]">
-                        <div className="flex gap-3 md:gap-5 items-center w-full">
-                            <div>
-                                <p className="text-sm opacity-80 text-white">Mood This Week</p>
-                                <h3 className="text-lg md:text-xl font-bold text-white">
-                                    {moodStats.length > 0
-                                        ? `Mostly ${[...moodStats].sort((a, b) => parseInt(b.percent) - parseInt(a.percent))[0].name}`
-                                        : "N/A"}
-                                </h3>
-                            </div>
-                            <img src={chart} alt="" className="absolute right-0 top-[30%] w-[90px] h-[50px] object-contain" />
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden w-[295px]">
+                        <div>
+                            <p className="text-xs opacity-80 text-white">Mood This Week</p>
+                            <h3 className="text-xl font-bold text-white">
+                                {moodStats.length > 0
+                                    ? `Mostly ${[...moodStats].sort((a, b) => parseInt(b.percent) - parseInt(a.percent))[0].name}`
+                                    : "N/A"}
+                            </h3>
                         </div>
+                        <img src={chart} alt="" className="absolute right-0 top-[30%] w-[90px] h-[50px] object-contain" />
                     </div>
                 </div>
+                {/* Stats Card End */}
+
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-6">
                     <Link to='/AddJournal' className="bg-[#4318FF] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm font-semibold flex items-center justify-center gap-2">
                         <img src={plus} alt="" />
