@@ -1,7 +1,7 @@
-import calendarIcon from "../assets/calendar.PNG";
-import emji from '../assets/emoji.PNG';
-import sad from '../assets/sad.PNG';
-import neutral from '../assets/neutral.PNG';
+import calendarIcon from "../assets/calendar.png";
+import emji from '../assets/emoji.png';
+import sad from '../assets/sad.png';
+import neutral from '../assets/neutral.png';
 import { API_BASE_URL } from "../API";
 import useAuth from "../hooks/useAuth";
 import { useState, useEffect, useRef } from "react";

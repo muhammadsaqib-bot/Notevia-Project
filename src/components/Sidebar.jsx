@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import noteviaLogo from "../assets/Neografica.PNG";
-import dashboard1 from "../assets/dashboardIcon.PNG";
-import journalIcon from "../assets/JournalIcon.PNG";
-import penIcon from "../assets/penIcon.PNG";
-import profileIcon from "../assets/profileIcon.PNG";
+import noteviaLogo from "../assets/neografica.png";
+import dashboard1 from "../assets/dashboardIcon.png";
+import journalIcon from "../assets/JournalIcon.png";
+import penIcon from "../assets/penIcon.png";
+import profileIcon from "../assets/profileIcon.png";
 
 const Sidebar = ({ activePage = "" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from '../assets/Neografica.PNG';
+import logo from '../assets/neografica.png';
 import axios from "axios";
 import Toaster from "../components/Toaster";
 import { useNavigate } from "react-router-dom";

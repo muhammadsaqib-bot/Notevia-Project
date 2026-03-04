@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from '../assets/Neografica.PNG';
+import logo from '../assets/neografica.png';
 import Toaster from '../components/Toaster';
 import { API_BASE_URL } from "../API";
 import AuthLayout from '../components/AuthLayout';

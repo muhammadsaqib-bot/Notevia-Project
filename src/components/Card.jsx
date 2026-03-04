@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import happyEmoji from '../assets/emoji.PNG';
-import sadEmoji from '../assets/sad.PNG';
-import neutralEmoji from '../assets/neutral.PNG';
+import happyEmoji from '../assets/emoji.png';
+import sadEmoji from '../assets/sad.png';
+import neutralEmoji from '../assets/neutral.png';
 import Toaster from './Toaster';
 import { useNavigate, } from 'react-router-dom';
 import { API_BASE_URL } from "../API";

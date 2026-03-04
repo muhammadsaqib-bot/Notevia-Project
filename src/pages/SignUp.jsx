@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import logo from '../assets/Neografica.PNG';
+import logo from '../assets/neografica.png';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_BASE_URL } from "../API";

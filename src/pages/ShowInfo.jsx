@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import happyEmoji from '../assets/emoji.PNG';
-import sadEmoji from '../assets/sad.PNG';
-import neutralEmoji from '../assets/neutral.PNG';
+import happyEmoji from '../assets/emoji.png';
+import sadEmoji from '../assets/sad.png';
+import neutralEmoji from '../assets/neutral.png';
 import Sidebar from "../components/Sidebar";
 
 const moodConfig = {

@@ -1,8 +1,8 @@
-import search from '../assets/Search Icon.PNG';
-import emoji from '../assets/emoji.PNG';
-import del from '../assets/delete.PNG';
-import write from '../assets/write.PNG';
-import eye from '../assets/eye.PNG';
+import search from '../assets/Search Icon.png';
+import emoji from '../assets/emoji.png';
+import del from '../assets/delete.png';
+import write from '../assets/write.png';
+import eye from '../assets/eye.png';
 import axios from "axios";
 import Toaster from "../components/Toaster";
 import Card from "../components/Card";
@@ -164,7 +164,7 @@ const Journals = () => {
                                 placeholder="Search"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="outline-none text-sm w-full h-9"
+                                className="outline-none text-sm w-full h-[36px]"
                             />
                             {searchLoading && (
                                 <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>
