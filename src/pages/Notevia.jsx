@@ -107,7 +107,8 @@ const NoteviApp = () => {
           content: content,
           date: numericDate,
           mood: mood,
-          heading: "Update Journal"
+          heading: "Update Journal",
+          tags: tags
         }
       });
     } catch (error) {

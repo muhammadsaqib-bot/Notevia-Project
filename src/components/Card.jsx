@@ -88,7 +88,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                 }
             });
         } catch (error) {
-            console.log("Error : ", error)
+            setToaster({ visible: true, message: "Failed to open editor. Please try again." });
         }
     }
 

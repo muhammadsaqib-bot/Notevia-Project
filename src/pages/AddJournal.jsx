@@ -119,7 +119,7 @@ const AddJournal = () => {
 
     const UpdateJournal = async () => {
         try {
-            setLoading(false)
+            setLoading(true)
             if (!token) {
                 return
             }
@@ -143,6 +143,7 @@ const AddJournal = () => {
             setTimeout(() => navigate("/Journals"), 1500);
         } catch (error) {
             console.log("Error : ", error)
+            showToast("Failed to update journal.");
         }
         finally {
         }
