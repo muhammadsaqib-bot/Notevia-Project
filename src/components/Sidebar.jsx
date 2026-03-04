@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import noteviaLogo from "../assets/neografica.png";
 import dashboard1 from "../assets/dashboardIcon.png";
-import journalIcon from "../assets/JournalIcon.png";
+import journalIcon from "../assets/journalIcon.png";
 import penIcon from "../assets/penIcon.png";
 import profileIcon from "../assets/profileIcon.png";
 
