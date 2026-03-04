@@ -55,17 +55,17 @@ const SignUp = () => {
 
     return (
         <AuthLayout>
-            <div className="flex flex-col gap-6 relative z-10 w-full max-w-[502px] px-4">
+            <div className="flex flex-col gap-6 relative z-10 w-full max-w-125.5 px-4">
                 <div className="flex justify-center items-center gap-2 ">
                     <img src={logo} alt="Logo" className="w-10 h-10" />
                     <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                 </div>
 
                 <form onSubmit={SignUpSubmitted} className="rounded-2xl bg-white w-full p-8">
-                    <h2 className="max-[750px]:text-[25px] text-center text-[34px] font-[700] text-[#1B2559]">
+                    <h2 className="max-[750px]:text-[25px] text-center text-[34px] font-bold text-[#1B2559]">
                         Create Account
                     </h2>
-                    <p className='max-[750px]:text-[12px] text-[#A3AED0] text-center font-[500] text-[16px]'>Start your journaling journey</p>
+                    <p className='max-[750px]:text-[12px] text-[#A3AED0] text-center font-medium text-[16px]'>Start your journaling journey</p>
 
 
                     {error && (
@@ -75,7 +75,7 @@ const SignUp = () => {
                     )}
 
                     <label className="block mt-4">
-                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px] ">Full Name</p>
+                        <p className="text-[#1B2559] font-normal text-[16px] leading-7 ">Full Name</p>
                         <input
                             type="text"
                             name="fullName"
@@ -87,7 +87,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Email</p>
+                        <p className="text-[#1B2559] font-normal text-[16px] leading-7">Email</p>
                         <input
                             type="email"
                             name="email"
@@ -99,7 +99,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Password</p>
+                        <p className="text-[#1B2559] font-normal text-[16px] leading-7">Password</p>
                         <input
                             type="password"
                             name="password"
@@ -111,7 +111,7 @@ const SignUp = () => {
                     </label>
 
                     <label className="block mt-4">
-                        <p className="text-[#1B2559] font-[400] text-[16px] leading-[28px]">Confirm Password</p>
+                        <p className="text-[#1B2559] font-normal text-[16px] leading-7">Confirm Password</p>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -125,14 +125,14 @@ const SignUp = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-12 text-[16px] bg-[#4318FF] rounded-3xl font-[700] text-white mt-8 disabled:opacity-50"
+                        className="w-full h-12 text-[16px] bg-[#4318FF] rounded-3xl font-bold text-white mt-8 disabled:opacity-50"
                     >
                         {loading ? "Creating..." : "Create account"}
                     </button>
 
-                    <p className="max-[750px]:text-[12px] text-center text-[14px] mt-3 text-[#A3AED0] font-[600]">
+                    <p className="max-[750px]:text-[12px] text-center text-[14px] mt-3 text-[#A3AED0] font-semibold">
                         Already have an account?{' '}
-                        <Link to='/SignIn' className="text-[#4318FF] font-[600] text-[14px]">
+                        <Link to='/SignIn' className="text-[#4318FF] font-semibold text-[14px]">
                             Sign In
                         </Link>
                     </p>

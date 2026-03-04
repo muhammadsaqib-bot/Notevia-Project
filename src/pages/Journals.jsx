@@ -130,14 +130,14 @@ const Journals = () => {
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
             <Sidebar activePage="journals" />
 
-            <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-72.5ex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex flex-col min-[970px]:flex-row justify-between items-start min-[970px]:items-center mb-6 sm:mb-8 gap-4">
                     <div>
                         <p className="text-sm text-[#A3AED0]">Hi {name || 'User'},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">Welcome to Notevia!</h1>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full min-[970px]:w-auto">
-                        <div className="relative w-full sm:w-[140px]">
+                        <div className="relative w-full sm:w-35">
                             <input
                                 type="date"
                                 value={date}
@@ -149,7 +149,7 @@ const Journals = () => {
                         <select
                             value={selectedMood}
                             onChange={(e) => setSelectedMood(e.target.value)}
-                            className="bg-white pl-5 w-full sm:w-[130px] text-gray-500 py-3 rounded-xl shadow-sm outline-none text-sm cursor-pointer"
+                            className="bg-white pl-5 w-full sm:w-32.5 text-gray-500 py-3 rounded-xl shadow-sm outline-none text-sm cursor-pointer"
                         >
                             <option value="All Mood">All Mood</option>
                             <option value="Happy">Happy</option>
@@ -158,13 +158,13 @@ const Journals = () => {
                             <option value="Sad">Sad</option>
                         </select>
 
-                        <div className="bg-white px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm w-full sm:w-[240px]">
+                        <div className="bg-white px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm w-full sm:w-60">
                             <img src={search} alt="" className="w-4 h-4 object-contain" />
                             <input
                                 placeholder="Search"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="outline-none text-sm w-full h-[36px]"
+                                className="outline-none text-sm w-full h-9"
                             />
                             {searchLoading && (
                                 <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>

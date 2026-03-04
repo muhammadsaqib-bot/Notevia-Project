@@ -160,7 +160,7 @@ const Dashboard = () => {
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
             <Sidebar activePage="dashboard" />
-            <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 md:mb-8">
                     <div>
                         <p className="text-sm text-[#A3AED0]">Hi {name},</p>
@@ -176,7 +176,7 @@ const Dashboard = () => {
                                 placeholder="Search"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="outline-none text-sm w-full sm:w-[240px] h-[36px]"
+                                className="outline-none text-sm w-full sm:w-60 h-9"
                             />
                             {searchLoading && (
                                 <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>
@@ -193,9 +193,9 @@ const Dashboard = () => {
 
                 {/* Stats Card - Fixed Equal Width */}
                 <div className="flex flex-wrap justify-start gap-4 mb-6 md:mb-8">
-                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-73.5">
                         <div className="flex gap-3 items-center">
-                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
+                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-linear-to-r from-[#868CFF] to-[#4318FF]">
                                 <img src={dashboard1} alt="" className="w-5 h-5 object-contain" />
                             </div>
                             <div>
@@ -205,9 +205,9 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-73.75">
                         <div className="flex gap-3 items-center">
-                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-gradient-to-r from-[#868CFF] to-[#4318FF]">
+                            <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-linear-to-r from-[#868CFF] to-[#4318FF]">
                                 <img src={calendar} alt="" className="w-5 h-5 object-contain" />
                             </div>
                             <div>
@@ -217,7 +217,7 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-[295px]">
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-73.75">
                         <div className="flex gap-3 items-center">
                             <div className="shrink-0 rounded-2xl w-11 h-11 flex justify-center items-center bg-[#EFF4FB]">
                                 <img src={tabler} alt="" className="w-5 h-5 object-contain" />
@@ -229,7 +229,7 @@ const Dashboard = () => {
                         </div>
                         <img src={graph} alt="" className="w-16 h-8 object-contain opacity-60" />
                     </div>
-                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-gradient-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden w-[295px]">
+                    <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-linear-to-r from-[#4318FF] to-[#6A53FF] text-white relative overflow-hidden w-73.75">
                         <div>
                             <p className="text-xs opacity-80 text-white">Mood This Week</p>
                             <h3 className="text-xl font-bold text-white">
@@ -238,7 +238,7 @@ const Dashboard = () => {
                                     : "N/A"}
                             </h3>
                         </div>
-                        <img src={chart} alt="" className="absolute right-0 top-[30%] w-[90px] h-[50px] object-contain" />
+                        <img src={chart} alt="" className="absolute right-0 top-[30%] w-22.5 h-12.5 object-contain" />
                     </div>
                 </div>
                 {/* Stats Card End */}
@@ -339,7 +339,7 @@ const Dashboard = () => {
                                     <div className="w-full ">
                                         <span className="text-sm font-medium text-[#2B3674] mr-2">{item.name}</span>
                                         <span>{item.percent}</span>
-                                        <div className="w-[100%] h-2 bg-[#F4F7FE] rounded-full overflow-hidden mt-1">
+                                        <div className="w-full h-2 bg-[#F4F7FE] rounded-full overflow-hidden mt-1">
                                             <div className="h-full bg-[#4318FF]" style={{ width: item.percent }}></div>
                                         </div>
                                     </div>

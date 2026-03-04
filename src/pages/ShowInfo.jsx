@@ -67,7 +67,7 @@ const ShowInfo = () => {
                     <Sidebar activePage="journals" />
                 </div>
 
-                <div className="main-wrapper md:ml-[290px] flex-1 p-4 md:p-10 flex flex-col items-start">
+                <div className="main-wrapper md:ml-72.5 flex-1 p-4 md:p-10 flex flex-col items-start">
 
                     <div className="mb-6 no-print">
                         <button

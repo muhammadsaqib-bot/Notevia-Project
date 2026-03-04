@@ -156,7 +156,7 @@ const AddJournal = () => {
 
             <Sidebar activePage="addjournal" />
 
-            <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
 
                 <div className="flex justify-between items-center mb-6 sm:mb-8">
                     <div>
@@ -200,7 +200,7 @@ const AddJournal = () => {
                                     <button
                                         key={mood}
                                         onClick={() => setSelectedMood(mood)}
-                                        className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer max-[275px]:w-full justify-center w-[275px]:w-full flex justify-center
+                                        className={`items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer max-[275px]:w-full w-[275px]:w-full flex justify-center
                                             ${selectedMood === mood
                                                 ? "bg-[#4318FF] text-white border-[#4318FF]"
                                                 : "bg-[#F4F7FE] text-[#A3AED0] border-[#E6EDFF] hover:border-[#4318FF]"

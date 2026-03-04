@@ -150,9 +150,9 @@ const NoteviApp = () => {
       <Sidebar activePage="notevia" />
 
 
-      <div className='md:ml-[290px] flex-1 p-4 md:p-8 overflow-x-hidden'>
-        <p className='text-[#707EAE] text-[14px] font-[700] leading-[24px]'>Hi {name || 'User'},</p>
-        <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-[700] mb-6 md:mb-8'>Welcome to Notevia!</h1>
+      <div className='md:ml-72.5 flex-1 p-4 md:p-8 overflow-x-hidden'>
+        <p className='text-[#707EAE] text-[14px] font-bold leading-6'>Hi {name || 'User'},</p>
+        <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-bold mb-6 md:mb-8'>Welcome to Notevia!</h1>
 
         <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5'>
           <div className='flex items-center gap-3'>
@@ -163,19 +163,19 @@ const NoteviApp = () => {
             >
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
             </svg>
-            <span className='text-[#2B3674] font-[600] text-[20px]'>View Journal</span>
+            <span className='text-[#2B3674] font-semibold text-[20px]'>View Journal</span>
           </div>
           {journalId && <div className='flex gap-2'>
             <button
               onClick={handleEdit}
-              className='flex items-center gap-2 px-4 py-2 rounded-[8px] bg-[#EDE8FF] text-[#4318FF] text-[14px] font-[600] hover:bg-[#e9edfc] transition-colors cursor-pointer'
+              className='flex items-center gap-2 px-4 py-2 rounded-lg bg-[#EDE8FF] text-[#4318FF] text-[14px] font-semibold hover:bg-[#e9edfc] transition-colors cursor-pointer'
             >
               <img src={edit} alt="" />
               Edit
             </button>
             <button
               onClick={() => setShowConfirm(true)}
-              className='flex items-center gap-2 px-4 py-2 rounded-[8px] bg-[#FF18181A] text-[#E53E3E] text-[14px] font-[600] hover:bg-[#ffe5e5] transition-colors cursor-pointer'
+              className='flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FF18181A] text-[#E53E3E] text-[14px] font-semibold hover:bg-[#ffe5e5] transition-colors cursor-pointer'
             >
               <img src={remove} alt="" />
               Delete
@@ -198,23 +198,23 @@ const NoteviApp = () => {
             </button>
           </div>
         ) : (
-          <div className='bg-white rounded-[16px] p-6 shadow-sm'>
+          <div className='bg-white rounded-2xl p-6 shadow-sm'>
             <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-1'>
               <div>
-                <h2 className='text-[#2B3674] text-xl md:text-[24px] font-[600]'>{title}</h2>
-                <p className='text-[#A3AED0] text-sm md:text-[16px] font-[500] mt-1'>
+                <h2 className='text-[#2B3674] text-xl md:text-[24px] font-semibold'>{title}</h2>
+                <p className='text-[#A3AED0] text-sm md:text-[16px] font-medium mt-1'>
                   {date ? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
                 </p>
               </div>
-              <div className='py-[6px] px-[10px] flex items-center gap-2 bg-[#F0EFFE] rounded-[8px] w-fit'>
+              <div className='py-1.5 px-2.5 flex items-center gap-2 bg-[#F0EFFE] rounded-lg w-fit'>
                 <img src={moodEmojis[mood] || happyEmoji} alt="" className="w-5 h-5 object-contain" />
-                <span className='text-[#4318FF] font-[300] text-[14px]'>{mood}</span>
+                <span className='text-[#4318FF] font-light text-[14px]'>{mood}</span>
               </div>
             </div>
 
             <hr className='border-[#E6EDFF] my-4' />
 
-            <div className='text-[#A3AED0] text-base md:text-[18px] leading-[130%] font-[500]'>
+            <div className='text-[#A3AED0] text-base md:text-[18px] leading-[130%] font-medium'>
               <p className="whitespace-pre-wrap">{content}</p>
             </div>
 
@@ -222,9 +222,9 @@ const NoteviApp = () => {
               <div className='flex gap-2 flex-wrap'>
                 {tags.length > 0
                   ? tags.map((tag, i) => (
-                    <span key={i} className='px-3 py-1 rounded-full bg-[#F0F0F0] text-[#1B2559] text-[14px] font-[300]'>{tag}</span>
+                    <span key={i} className='px-3 py-1 rounded-full bg-[#F0F0F0] text-[#1B2559] text-[14px] font-light'>{tag}</span>
                   ))
-                  : <span className='px-3 py-1 rounded-full bg-[#F0F0F0] text-[#1B2559] text-[14px] font-[300]'>Journal</span>
+                  : <span className='px-3 py-1 rounded-full bg-[#F0F0F0] text-[#1B2559] text-[14px] font-light'>Journal</span>
                 }
               </div>
               <button
@@ -240,7 +240,7 @@ const NoteviApp = () => {
 
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl p-6 w-[300px] shadow-xl text-center">
+          <div className="bg-white rounded-2xl p-6 w-75 shadow-xl text-center">
             <p className="text-[#2B3674] font-semibold text-base mb-1">Delete Journal?</p>
             <p className="text-sm text-[#A3AED0] mb-5">
               Are you sure you want to delete this journal? This action cannot be undone.

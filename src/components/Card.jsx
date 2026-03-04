@@ -113,7 +113,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                 <div className="flex justify-between mb-2 flex-wrap gap-2">
                     <div>
                         <h3 className="font-semibold text-[#2B3674]">{title}</h3>
-                        <p className="text-xs text-[#A3AED0] font-[500]">{date}</p>
+                        <p className="text-xs text-[#A3AED0] font-medium">{date}</p>
                     </div>
                     <div className="flex items-center gap-2 bg-[#F4F7FE] px-2 py-1 rounded-full text-sm">
                         <img src={moodEmojis[mood] || emoji} alt="" className="w-4 h-4 object-contain" />
@@ -157,7 +157,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
 
             {showConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-2xl p-6 w-[300px] shadow-xl text-center">
+                    <div className="bg-white rounded-2xl p-6 w-75 shadow-xl text-center">
                         <p className="text-[#2B3674] font-semibold text-base mb-1">Delete Journal?</p>
                         <p className="text-sm text-[#A3AED0] mb-5">
                             Are you sure you want to delete this journal? This action cannot be undone.

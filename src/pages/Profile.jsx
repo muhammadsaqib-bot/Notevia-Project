@@ -189,8 +189,8 @@ const Profile = () => {
             )}
 
             {showPasswordModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b14374d] backdrop-blur-[8px]">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-[500px] mx-4">
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-[#0b14374d] backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-125 mx-4">
                         <h2 className="text-2xl font-bold text-[#2B3674] text-center mb-6">
                             Change Password
                         </h2>
@@ -237,7 +237,7 @@ const Profile = () => {
                         <div className="flex gap-4">
                             <button
                                 onClick={closeModal}
-                                className="flex-1 h-[50px] rounded-full border border-[#E6EDFF] bg-[#F4F7FE] text-[#2B3674] text-sm font-[500] hover:bg-gray-100 transition-colors cursor-pointer"
+                                className="flex-1 h-12.5 rounded-full border border-[#E6EDFF] bg-[#F4F7FE] text-[#2B3674] text-sm font-medium hover:bg-gray-100 transition-colors cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -245,7 +245,7 @@ const Profile = () => {
                             <button
                                 onClick={handleUpdatePassword}
                                 disabled={passwordLoading}
-                                className="flex-1 h-[50px] rounded-full bg-[#4318FF] text-white text-sm font-[500] hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="flex-1 h-12.5 rounded-full bg-[#4318FF] text-white text-sm font-medium hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {passwordLoading ? "Updating..." : "Update Password"}
                             </button>
@@ -257,7 +257,7 @@ const Profile = () => {
             <Sidebar activePage="profile" />
 
 
-            <div className="md:ml-[290px] flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6 sm:mb-8">
                     <div>
                         <p className="text-sm text-[#A3AED0]">Hi {displayName.split(' ')[0] || 'User'},</p>
@@ -284,7 +284,7 @@ const Profile = () => {
 
                     <div className="flex items-center gap-4 mb-8">
                         <div
-                            className="relative w-[70px] h-[70px] rounded-full cursor-pointer group"
+                            className="relative w-17.5 h-17.5 rounded-full cursor-pointer group"
                             onClick={() => fileInputRef.current.click()}
                         >
                             {previewPic ? (
@@ -312,7 +312,7 @@ const Profile = () => {
 
                     <div className="flex flex-col min-[768px]:flex-row gap-6 mb-6">
                         <div className="flex-1">
-                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Full Name</label>
+                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-1.25">Full Name</label>
                             <input
                                 type="text"
                                 value={fullName}
@@ -322,7 +322,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Date of Birth</label>
+                            <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-1.25">Date of Birth</label>
                             <input
                                 type="date"
                                 value={dob}
@@ -333,7 +333,7 @@ const Profile = () => {
                     </div>
 
                     <div className="mb-8">
-                        <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-[5px]">Bio</label>
+                        <label className="block text-sm font-medium text-[#2B3674] mb-2 pl-1.25">Bio</label>
                         <textarea
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
@@ -346,14 +346,14 @@ const Profile = () => {
                     <div className="flex flex-col min-[768px]:flex-row justify-end gap-3">
                         <button
                             onClick={handleLogout}
-                            className="w-full min-[768px]:w-[174px] h-[50px] rounded-full border border-red-300 bg-[#F5E1E7] text-[16px] font-[500] hover:bg-red-50 transition-colors cursor-pointer text-[#FF1818]"
+                            className="w-full min-[768px]:w-43.5 h-12.5 rounded-full border border-red-300 bg-[#F5E1E7] text-[16px] font-medium hover:bg-red-50 transition-colors cursor-pointer text-[#FF1818]"
                         >
                             Logout
                         </button>
 
                         <button
                             onClick={() => setShowPasswordModal(true)}
-                            className="w-full min-[768px]:w-[213px] h-[50px] rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-[500] hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A]"
+                            className="w-full min-[768px]:w-53.25 h-12.5 rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-medium hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A]"
                         >
                             Change Password
                         </button>
@@ -361,7 +361,7 @@ const Profile = () => {
                         <button
                             onClick={handleSave}
                             disabled={loading}
-                            className="w-full min-[768px]:w-[174px] h-[50px] rounded-full bg-[#4318FF] text-white text-sm font-[500] hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full min-[768px]:w-43.5 h-12.5 rounded-full bg-[#4318FF] text-white text-sm font-medium hover:bg-[#3311DD] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             {loading ? "Saving..." : "Save Changes"}
                         </button>
