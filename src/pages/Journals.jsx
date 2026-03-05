@@ -1,4 +1,4 @@
-import search from '../assets/Search Icon.png';
+import search from '../assets/search.png';
 import emoji from '../assets/emoji.png';
 import del from '../assets/delete.png';
 import write from '../assets/write.png';
