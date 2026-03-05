@@ -209,7 +209,7 @@ const Journals = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-1 w-[1000px]:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6">
                         {displayList.map((journal) => (
                             <Card
                                 key={journal.id || journal._id}
