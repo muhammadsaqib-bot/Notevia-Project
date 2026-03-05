@@ -1,5 +1,4 @@
 import search from '../assets/search.png';
-import emoji from '../assets/emoji.png';
 import del from '../assets/delete.png';
 import write from '../assets/write.png';
 import eye from '../assets/eye.png';
@@ -130,7 +129,7 @@ const Journals = () => {
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
             <Sidebar activePage="journals" />
 
-            <div className="md:ml-72.5ex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
                 <div className="flex flex-col min-[970px]:flex-row justify-between items-start min-[970px]:items-center mb-6 sm:mb-8 gap-4">
                     <div>
                         <p className="text-sm text-[#A3AED0]">Hi {name || 'User'},</p>
@@ -220,7 +219,6 @@ const Journals = () => {
                                 mood={journal.mood}
                                 content={journal.content}
                                 tags={journal.tags}
-                                emoji={emoji}
                                 eye={eye}
                                 write={write}
                                 del={del}

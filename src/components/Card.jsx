@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import happyEmoji from '../assets/emoji.png';
-import sadEmoji from '../assets/sad.png';
-import neutralEmoji from '../assets/neutral.png';
 import Toaster from './Toaster';
 import { useNavigate, } from 'react-router-dom';
 import { API_BASE_URL } from "../API";
 
-const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, onDelete, onUpdate, media }) => {
+const Card = ({ id, title, date, mood, content, tags, eye, write, del, onDelete, onUpdate, media }) => {
     const navigate = useNavigate();
 
     const [isDeleting, setIsDeleting] = useState(false);
@@ -21,10 +18,10 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
     });
 
     const moodEmojis = {
-        "Happy": happyEmoji,
-        "Calm": happyEmoji,
-        "Neutral": neutralEmoji,
-        "Sad": sadEmoji,
+        "Happy": "😊",
+        "Calm": "😌",
+        "Neutral": "😐",
+        "Sad": "😢",
     };
 
     const handleChange = (e) => {
@@ -116,7 +113,7 @@ const Card = ({ id, title, date, mood, content, tags, emoji, eye, write, del, on
                         <p className="text-xs text-[#A3AED0] font-medium">{date}</p>
                     </div>
                     <div className="flex items-center gap-2 bg-[#F4F7FE] px-2 py-1 rounded-full text-sm">
-                        <img src={moodEmojis[mood] || emoji} alt="" className="w-4 h-4 object-contain" />
+                        <span className="text-base leading-none">{moodEmojis[mood] || "😊"}</span>
                         {mood}
                     </div>
                 </div>

@@ -4,9 +4,6 @@ import calendar from '../assets/calendar.png';
 import tabler from '../assets/tabler.png';
 import graph from '../assets/Graph.png';
 import chart from '../assets/Chart.png';
-import emoji from '../assets/emoji.png';
-import sad from '../assets/sad.png';
-import neutral from '../assets/neutral.png';
 import plus from '../assets/plus.png';
 import del from '../assets/delete.png';
 import write from '../assets/write.png';
@@ -19,6 +16,8 @@ import Toaster from "../components/Toaster";
 import { API_BASE_URL } from "../API";
 import Sidebar from "../components/Sidebar";
 import useAuth from "../hooks/useAuth";
+
+const moodEmojis = { Happy: "😊", Calm: "😌", Neutral: "😐", Sad: "😢" };
 
 const Dashboard = () => {
     const { name, profilePic, isVerifying } = useAuth();
@@ -292,7 +291,6 @@ const Dashboard = () => {
                                         mood={journal.mood}
                                         content={journal.content}
                                         tags={journal.tags}
-                                        emoji={emoji}
                                         eye={eye}
                                         write={write}
                                         del={del}
@@ -318,7 +316,6 @@ const Dashboard = () => {
                                         mood={journal.mood}
                                         content={journal.content}
                                         tags={journal.tags}
-                                        emoji={emoji}
                                         eye={eye}
                                         write={write}
                                         del={del}
@@ -335,7 +332,7 @@ const Dashboard = () => {
                         <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
                             {moodStats.map((item, i) => (
                                 <div key={i} className="mb-4 flex items-center">
-                                    <img src={item.name === "Sad" ? sad : item.name === "Neutral" ? neutral : emoji} alt="" className="w-6 h-6 object-contain mr-2 mt-2" />
+                                    <span className="text-xl leading-none mr-2 mt-2">{moodEmojis[item.name] || "😊"}</span>
                                     <div className="w-full ">
                                         <span className="text-sm font-medium text-[#2B3674] mr-2">{item.name}</span>
                                         <span>{item.percent}</span>

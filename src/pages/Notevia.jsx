@@ -1,8 +1,5 @@
 import edit from '../assets/bluePen.png'
 import remove from '../assets/basket.png'
-import happyEmoji from '../assets/emoji.png'
-import sadEmoji from '../assets/sad.png'
-import neutralEmoji from '../assets/neutral.png'
 import copy from '../assets/copy.png'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -14,10 +11,10 @@ import useAuth from "../hooks/useAuth";
 
 
 const moodEmojis = {
-  "Happy": happyEmoji,
-  "Calm": happyEmoji,
-  "Neutral": neutralEmoji,
-  "Sad": sadEmoji,
+  "Happy": "😊",
+  "Calm": "😌",
+  "Neutral": "😐",
+  "Sad": "😢",
 };
 
 const NoteviApp = () => {
@@ -207,7 +204,7 @@ const NoteviApp = () => {
                 </p>
               </div>
               <div className='py-1.5 px-2.5 flex items-center gap-2 bg-[#F0EFFE] rounded-lg w-fit'>
-                <img src={moodEmojis[mood] || happyEmoji} alt="" className="w-5 h-5 object-contain" />
+                <span className="text-lg leading-none">{moodEmojis[mood] || "😊"}</span>
                 <span className='text-[#4318FF] font-light text-[14px]'>{mood}</span>
               </div>
             </div>

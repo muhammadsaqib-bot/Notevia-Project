@@ -113,7 +113,7 @@ const CreatPin = () => {
                                 onPaste={handlePaste}
                                 key={index}
                                 id={`pin-${index}`}
-                                type="number"
+                                type="text"
                                 maxLength="1"
                                 value={digit}
                                 onChange={(e) => handleChange(e.target.value, index)}

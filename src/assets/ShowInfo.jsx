@@ -1,14 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import happyEmoji from '../assets/emoji.png';
-import sadEmoji from '../assets/sad.png';
-import neutralEmoji from '../assets/neutral.png';
 import Sidebar from "../components/Sidebar";
 
 const moodConfig = {
-    Happy: { emoji: happyEmoji, color: "#4318FF", bg: "#E9E6FF", label: "Happy" },
-    Calm: { emoji: happyEmoji, color: "#4318FF", bg: "#E9E6FF", label: "Calm" },
-    Neutral: { emoji: neutralEmoji, color: "#A3AED0", bg: "#F4F7FE", label: "Neutral" },
-    Sad: { emoji: sadEmoji, color: "#868CFF", bg: "#EEF0FF", label: "Sad" },
+    Happy: { emoji: "😊", color: "#4318FF", bg: "#E9E6FF", label: "Happy" },
+    Calm: { emoji: "😌", color: "#4318FF", bg: "#E9E6FF", label: "Calm" },
+    Neutral: { emoji: "😐", color: "#A3AED0", bg: "#F4F7FE", label: "Neutral" },
+    Sad: { emoji: "😢", color: "#868CFF", bg: "#EEF0FF", label: "Sad" },
 };
 
 const ShowInfo = () => {
@@ -108,7 +105,7 @@ const ShowInfo = () => {
 
                                     {/* Mood badge */}
                                     <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
-                                        <img src={moodInfo.emoji} alt={mood} className="w-4 h-4 object-contain" />
+                                        <span className="text-xl leading-none">{moodInfo.emoji}</span>
                                         <span className="text-white text-sm font-medium">{mood || "—"}</span>
                                     </div>
                                 </div>
@@ -123,72 +120,11 @@ const ShowInfo = () => {
                         </div>
 
 
-                        {/* Media / Images Gallery */}
-                        {media && media.length > 0 && (
-                            <div className="px-8 pt-6">
-                                <p className="text-xs text-[#A3AED0] uppercase tracking-widest font-medium mb-3">
-                                    Attachments ({media.length})
-                                </p>
-                                {media.length === 1 ? (
-                                    /* Single image — 50% width, centered */
-                                    <div className="flex justify-center mb-2">
-                                        {(() => {
-                                            const url = media[0].url || media[0];
-                                            const isImage = /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url);
-                                            return isImage ? (
-                                                <a href={url} target="_blank" rel="noreferrer" className="block w-1/2">
-                                                    <img
-                                                        src={url}
-                                                        alt="attachment-1"
-                                                        className="w-full h-56 object-cover rounded-xl border border-[#E6EDFF] hover:opacity-90 transition-opacity"
-                                                    />
-                                                </a>
-                                            ) : (
-                                                <a href={url} target="_blank" rel="noreferrer"
-                                                    className="flex items-center gap-3 p-3 bg-[#F4F7FE] rounded-xl border border-[#E6EDFF] hover:bg-[#EEF2FF] transition-colors w-1/2">
-                                                    <div className="w-9 h-9 rounded-lg bg-[#E9E6FF] flex items-center justify-center shrink-0">
-                                                        <svg className="w-5 h-5 text-[#4318FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a4 4 0 00-5.656-5.656L5.757 10.757a6 6 0 008.486 8.486L19 14.5" />
-                                                        </svg>
-                                                    </div>
-                                                    <span className="text-sm text-[#2B3674] font-medium truncate">
-                                                        {url.split('/').pop() || 'File 1'}
-                                                    </span>
-                                                </a>
-                                            );
-                                        })()}
-                                    </div>
-                                ) : (
-                                    /* 2 or more — always 2 columns, each 50% */
-                                    <div className="grid grid-cols-2 gap-3 mb-2">
-                                        {media.map((item, i) => {
-                                            const url = item.url || item;
-                                            const isImage = /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url);
-                                            return isImage ? (
-                                                <a key={i} href={url} target="_blank" rel="noreferrer" className="block">
-                                                    <img
-                                                        src={url}
-                                                        alt={`attachment-${i + 1}`}
-                                                        className="w-full h-56 object-cover rounded-xl border border-[#E6EDFF] hover:opacity-90 transition-opacity"
-                                                    />
-                                                </a>
-                                            ) : (
-                                                <a key={i} href={url} target="_blank" rel="noreferrer"
-                                                    className="flex items-center gap-3 p-3 bg-[#F4F7FE] rounded-xl border border-[#E6EDFF] hover:bg-[#EEF2FF] transition-colors">
-                                                    <div className="w-9 h-9 rounded-lg bg-[#E9E6FF] flex items-center justify-center shrink-0">
-                                                        <svg className="w-5 h-5 text-[#4318FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a4 4 0 00-5.656-5.656L5.757 10.757a6 6 0 008.486 8.486L19 14.5" />
-                                                        </svg>
-                                                    </div>
-                                                    <span className="text-sm text-[#2B3674] font-medium truncate">
-                                                        {url.split('/').pop() || `File ${i + 1}`}
-                                                    </span>
-                                                </a>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
+                        {/* Media / Images */}
+                        {media && media.length > 0 && media[0].url ? (
+                            <img src={media[0].url} alt="journal" />
+                        ) : (
+                            <p>No Image Available</p>
                         )}
                         {/* Content */}
                         <div className="fade-up-3 px-8 py-6">
@@ -218,7 +154,7 @@ const ShowInfo = () => {
                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                                 style={{ background: moodInfo.bg }}
                             >
-                                <img src={moodInfo.emoji} alt={mood} className="w-5 h-5 object-contain" />
+                                <span className="text-xl leading-none">{moodInfo.emoji}</span>
                             </div>
                             <div>
                                 <p className="text-xs text-[#A3AED0] font-medium">Mood recorded</p>

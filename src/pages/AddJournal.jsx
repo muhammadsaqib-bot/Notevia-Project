@@ -1,7 +1,6 @@
 import calendarIcon from "../assets/calendar.png";
-import emji from '../assets/emoji.png';
-import sad from '../assets/sad.png';
-import neutral from '../assets/neutral.png';
+
+const moodEmojis = { Happy: "😊", Calm: "😌", Neutral: "😐", Sad: "😢" };
 import { API_BASE_URL } from "../API";
 import useAuth from "../hooks/useAuth";
 import { useState, useEffect, useRef } from "react";
@@ -30,7 +29,7 @@ const AddJournal = () => {
     const [error, setError] = useState("");
     const [toastMsg, setToastMsg] = useState("");
     const [toastOpen, setToastOpen] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const fileInputRef = useRef(null);
 
 
@@ -83,9 +82,7 @@ const AddJournal = () => {
             formData.append("content", entry.trim());
             formData.append("journalDate", new Date(date).toISOString());
             formData.append("mood", selectedMood);
-            if (selectedFile) {
-                formData.append("files", selectedFile);
-            }
+            selectedFiles.forEach(file => formData.append("files", file));
 
             const response = await axios.post(`${API_BASE_URL}journals`, formData, {
                 headers: {
@@ -129,9 +126,7 @@ const AddJournal = () => {
             formData.append("content", entry.trim());
             formData.append("journalDate", new Date(date).toISOString());
             formData.append("mood", selectedMood);
-            if (selectedFile) {
-                formData.append("files", selectedFile);
-            }
+            selectedFiles.forEach(file => formData.append("files", file));
 
             const res_update = await axios.patch(`${API_BASE_URL}journals/${Journal_data.journalId}`, formData, {
                 headers: {
@@ -206,11 +201,7 @@ const AddJournal = () => {
                                                 : "bg-[#F4F7FE] text-[#A3AED0] border-[#E6EDFF] hover:border-[#4318FF]"
                                             }`}
                                     >
-                                        <img
-                                            src={mood === "Sad" ? sad : mood === "Neutral" ? neutral : emji}
-                                            alt=""
-                                            className="w-4 h-4"
-                                        />
+                                        <span className="text-base leading-none">{moodEmojis[mood]}</span>
                                         {mood}
                                     </button>
                                 ))}
@@ -241,13 +232,14 @@ const AddJournal = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-[#4318FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a4 4 0 00-5.656-5.656L5.757 10.757a6 6 0 008.486 8.486L19 14.5" />
                             </svg>
-                            {selectedFile ? selectedFile.name : "Click to select a file"}
+                            {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected: ${selectedFiles.map(f => f.name).join(', ')}` : "Click to select files"}
                         </div>
                         <input
                             ref={fileInputRef}
                             type="file"
                             className="hidden"
-                            onChange={(e) => setSelectedFile(e.target.files[0] || null)}
+                            onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+                            multiple
                         />
                     </div>
 
