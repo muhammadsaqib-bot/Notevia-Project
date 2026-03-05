@@ -1,5 +1,5 @@
 import dashboard1 from "../assets/dashboardIcon.png";
-import search from '../assets/search.png';
+import search from '../assets/SearchIcon.png';
 import calendar from '../assets/calendar.png';
 import tabler from '../assets/tabler.png';
 import graph from '../assets/Graph.png';
