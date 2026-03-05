@@ -99,14 +99,14 @@ const SignIn = () => {
             {toastOpen && <Toaster message={toastMsg} visible={toastOpen} onClose={() => setToastOpen(false)} />}
 
             <AuthLayout>
-                <div className="flex flex-col gap-6 relative z-10 w-full max-w-125.5x-4">
+                <div className="flex flex-col gap-6 relative z-10 w-full max-w-125.5 px-4">
                     <div className="flex justify-center items-center gap-2 ">
                         <img src={logo} alt="Logo" className="w-10 h-10" />
                         <h3 className="text-[26px] font-bold text-[#1B2559]">NOTEVIA</h3>
                     </div>
 
                     <form onSubmit={handleLogin} className="rounded-2xl bg-white w-full p-8">
-                        <h2 className="font-boldtext-center text-[34px] text-[#1B2559]">Welcome back</h2>
+                        <h2 className="max-[750px]:text-[25px] text-center text-[34px] font-bold text-[#1B2559]">Welcome back</h2>
                         <p className='text-[#A3AED0] text-center font-medium text-[16px]'>Sign in to your account</p>
 
                         {error && <div className="bg-red-100 text-red-600 p-2 rounded mt-4 text-sm">{error}</div>}

@@ -108,7 +108,7 @@ const ConfirmPin = () => {
                                 onPaste={handlePaste}
                                 id={`pin-${index}`}
                                 key={index}
-                                type="number"
+                                type="text"
                                 maxLength="1"
                                 value={digit}
                                 onChange={(e) => handleChange(e.target.value, index)}
