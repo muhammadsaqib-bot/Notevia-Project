@@ -254,7 +254,7 @@ const AddJournal = () => {
                         />
                     </div>
 
-                    <div className="flex flex-col min-[300px]:flex-row justify-end gap-4">
+                    <div className="flex flex-col min-[530px]:flex-row justify-end gap-4">
                         <button
                             onClick={handleCancel}
                             className="w-full min-[300px]:w-auto px-6 py-3 rounded-full border border-[#E6EDFF] text-[#A3AED0] text-sm font-medium hover:bg-[#F4F7FE] transition-colors cursor-pointer"
