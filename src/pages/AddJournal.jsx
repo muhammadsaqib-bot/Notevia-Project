@@ -8,6 +8,7 @@ import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Toaster from "../components/Toaster";
 import Sidebar from "../components/Sidebar";
+import { FormSkeleton } from "../components/SkeletonLoader";
 
 const AddJournal = () => {
     const location = useLocation();
@@ -42,11 +43,7 @@ const AddJournal = () => {
 
     if (isVerifying) {
         return (
-            <div className="max-w-full min-h-screen bg-[#F4F7FE] 
-                        flex justify-center items-center">
-                <div className="w-12 h-12 border-4 border-[#4318FF] 
-                           border-t-transparent rounded-full animate-spin"/>
-            </div>
+            <FormSkeleton />
         );
     }
 

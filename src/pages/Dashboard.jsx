@@ -16,6 +16,7 @@ import Toaster from "../components/Toaster";
 import { API_BASE_URL } from "../API";
 import Sidebar from "../components/Sidebar";
 import useAuth from "../hooks/useAuth";
+import { CardSkeleton, DashboardSkeleton } from "../components/SkeletonLoader";
 
 const moodEmojis = { Happy: "😊", Calm: "😌", Neutral: "😐", Sad: "😢" };
 
@@ -149,9 +150,7 @@ const Dashboard = () => {
 
     if (isVerifying) {
         return (
-            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center">
-                <div className="w-12 h-12 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <DashboardSkeleton />
         );
     }
 
@@ -266,8 +265,10 @@ const Dashboard = () => {
 
                         {/* Journal loading (initial page load) */}
                         {journalsLoading ? (
-                            <div className="flex justify-center py-10">
-                                <div className="w-8 h-8 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <CardSkeleton key={i} />
+                                ))}
                             </div>
                         ) : searchLoading ? (
                             // Search in progress - show shimmer/spinner
@@ -346,7 +347,6 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <h1>Hello World!</h1>
         </div>
     )
 }

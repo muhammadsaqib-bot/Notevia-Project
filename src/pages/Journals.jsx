@@ -11,6 +11,7 @@ import Sidebar from '../components/Sidebar';
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { CardSkeleton, DashboardSkeleton } from "../components/SkeletonLoader";
 
 const Journals = () => {
     const { name, profilePic, isVerifying } = useAuth();
@@ -118,9 +119,7 @@ const Journals = () => {
 
     if (isVerifying) {
         return (
-            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex justify-center items-center">
-                <div className="w-12 h-12 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <DashboardSkeleton />
         );
     }
 
@@ -189,8 +188,10 @@ const Journals = () => {
                 </div>
 
                 {journalsLoading ? (
-                    <div className="flex justify-center items-center py-20">
-                        <div className="w-8 h-8 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="grid grid-cols-1 w-[1000px]:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6">
+                        {[1, 2, 3, 4].map((i) => (
+                            <CardSkeleton key={i} />
+                        ))}
                     </div>
                 ) : searchLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-3">
