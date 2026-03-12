@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SignUp from './pages/SignUp.jsx'
 import SignIn from './pages/SignIn.jsx'
