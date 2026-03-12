@@ -46,13 +46,13 @@ const Sidebar = ({ activePage = "" }) => {
             ${isMenuOpen ? "h-auto pb-5" : "h-[80px] overflow-hidden md:h-screen md:overflow-visible"}`}
         >
             <div className="flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10">
-                <div className="flex items-center gap-4 pr-[35px]">
-                    <Link to="/Notevia" className="cursor-pointer">
+                <div className="flex items-center pr-[35px]">
+                    <Link to="/Notevia" className="cursor-pointer flex items-center gap-4">
                         <img src={noteviaLogo} alt="Notevia Logo" />
+                        <h2 className="font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]">
+                            NOTEVIA
+                        </h2>
                     </Link>
-                    <h2 className="font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]">
-                        NOTEVIA
-                    </h2>
                 </div>
 
                 <button
