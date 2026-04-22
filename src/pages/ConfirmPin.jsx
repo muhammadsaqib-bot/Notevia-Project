@@ -69,7 +69,7 @@ const ConfirmPin = () => {
                 else if (response.data.token) localStorage.setItem('token', response.data.token);
 
                 showToast("PIN verified successfully!");
-                setTimeout(() => navigate('/Notevia'), 1500);
+                setTimeout(() => navigate('/Notevia', { state: { fromConfirmPin: true }, replace: true }), 1500);
             }
         } catch (err) {
             setError(err.response?.data?.message || "Invalid PIN. Please try again.");
@@ -121,7 +121,7 @@ const ConfirmPin = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-10 sm:h-14 bg-gradient-to-r from-[#4318FF] to-[#6A53FF] rounded-full font-medium text-white disabled:opacity-50"
+                        className="w-full h-10 sm:h-14 bg-linear-to-r from-[#4318FF] to-[#6A53FF] rounded-full font-medium text-white disabled:opacity-50"
                     >
                         {loading ? "Verifying..." : "Continue"}
                     </button>

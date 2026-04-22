@@ -19,8 +19,10 @@ const moodEmojis = {
 };
 
 const NoteviApp = () => {
-  const { name } = useAuth();
-  const [isVerifying, setIsVerifying] = useState(true);
+  const { name, profilePic, isVerifying: authVerifying } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState("");
   const [toastOpen, setToastOpen] = useState(false);
 
@@ -32,10 +34,6 @@ const NoteviApp = () => {
   const [tags, setTags] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const showToast = (msg) => {
     setToastMsg(msg);
     setToastOpen(true);
@@ -43,16 +41,16 @@ const NoteviApp = () => {
   };
 
   useEffect(() => {
+    if (authVerifying) return;
+
     const fetchData = async () => {
       const token = localStorage.getItem('token');
       if (!token) { navigate("/SignIn"); return; }
 
+      const id = location.state?.journalId;
+      let data = null;
       try {
-
-
-        const id = location.state?.journalId;
-
-        let data = null;
+        setLoading(true);
         if (id) {
           const res = await axios.get(`${API_BASE_URL}journals/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -75,25 +73,19 @@ const NoteviApp = () => {
           setTags(data.tags || []);
           setJournalId(data.id || data._id);
         }
-
-        setIsVerifying(false);
       } catch (err) {
-        if (err.response?.status === 401) {
-          if (err.response?.data?.message === "PIN verification required") {
-            navigate("/ConfirmPin"); return;
-          }
-          showToast("Session expired. Please login again.");
-          localStorage.removeItem("token");
-          navigate("/SignIn");
+        if (err.response?.status === 401 || err.response?.status === 423) {
+          navigate("/ConfirmPin");
           return;
         }
         showToast("Failed to load journal.");
-        setIsVerifying(false);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [navigate, location]);
+  }, [navigate, location, authVerifying]);
 
   const handleEdit = () => {
     try {
@@ -133,7 +125,7 @@ const NoteviApp = () => {
     }
   };
 
-  if (isVerifying) {
+  if (authVerifying || (loading && !journalId)) {
     return (
       <ViewSkeleton />
     );
@@ -147,8 +139,19 @@ const NoteviApp = () => {
 
 
       <div className='md:ml-72.5 flex-1 p-4 md:p-8 overflow-x-hidden'>
-        <p className='text-[#707EAE] text-[14px] font-bold leading-6'>Hi {name || 'User'},</p>
-        <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-bold mb-6 md:mb-8'>Welcome to Notevia!</h1>
+        <div className="flex justify-between items-center mb-6 sm:mb-8">
+          <div>
+            <p className='text-[#707EAE] text-[14px] font-bold leading-6'>Hi {name || 'User'},</p>
+            <h1 className='text-[#2B3674] text-2xl md:text-[34px] font-bold'>Welcome to Notevia!</h1>
+          </div>
+          <div className="bg-white p-1 rounded">
+            <img
+              src={profilePic || "https://via.placeholder.com/150"}
+              alt="Profile"
+              className="w-10 h-10 rounded-full object-cover border border-[#E6EDFF]"
+            />
+          </div>
+        </div>
 
         <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5'>
           <div className='flex items-center gap-3'>
@@ -255,6 +258,6 @@ const NoteviApp = () => {
 
     </div>
   );
-};
+}
 
 export default NoteviApp;

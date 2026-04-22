@@ -26,6 +26,8 @@ const Dashboard = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [journals, setJournals] = useState([]);
     const [journalsLoading, setJournalsLoading] = useState(true);
+    const navigate = useNavigate();
+
     const [moodStats, setMoodStats] = useState([
         { name: "Happy", percent: "0%" },
         { name: "Calm", percent: "0%" },
@@ -38,7 +40,6 @@ const Dashboard = () => {
     const [totalJournals, setTotalJournals] = useState(0);
     const [thisWeekCount, setThisWeekCount] = useState(0);
     const [writingStreak, setWritingStreak] = useState(0);
-    const navigate = useNavigate();
     const debounceTimer = useRef(null);
 
     const showToast = (msg) => {
@@ -71,6 +72,10 @@ const Dashboard = () => {
                 });
                 setSearchResults(res.data.data || []);
             } catch (err) {
+                if (err.response?.status === 401 || err.response?.status === 423) {
+                    navigate("/ConfirmPin");
+                    return;
+                }
                 showToast("Search failed. Try again.");
                 setSearchResults([]);
             } finally {
@@ -80,11 +85,13 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        if (isVerifying) return;
+
         const fetchJournals = async () => {
             const token = localStorage.getItem('token');
             if (!token) return;
-
             setJournalsLoading(true);
+
             try {
                 const statsResponse = await axios.get(`${API_BASE_URL}Dashboard`, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -109,12 +116,8 @@ const Dashboard = () => {
                     percent
                 })));
             } catch (err) {
-                if (err.response?.status === 401) {
-                    showToast("Session expired. Please login again.");
-                    setTimeout(() => {
-                        localStorage.removeItem("token");
-                        navigate("/SignIn");
-                    }, 1500);
+                if (err.response?.status === 401 || err.response?.status === 423) {
+                    navigate("/ConfirmPin");
                     return;
                 }
                 showToast(err.response?.data?.message || "Failed to load journals.");
@@ -123,7 +126,7 @@ const Dashboard = () => {
             }
         };
         fetchJournals();
-    }, [navigate]);
+    }, [isVerifying, navigate]);
 
     const handleDelete = (deletedId) => {
         setJournals(prev => prev.filter(j => (j.id || j._id) !== deletedId));
@@ -189,7 +192,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Stats Card - Fixed Equal Width */}
                 <div className="flex flex-wrap justify-start gap-4 mb-6 md:mb-8">
                     <div className="p-4 md:p-5 rounded-2xl flex items-center justify-between shadow-sm bg-white w-73.5">
                         <div className="flex gap-3 items-center">
@@ -263,7 +265,6 @@ const Dashboard = () => {
                             )}
                         </div>
 
-                        {/* Journal loading (initial page load) */}
                         {journalsLoading ? (
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {[1, 2, 3, 4].map((i) => (
@@ -271,13 +272,13 @@ const Dashboard = () => {
                                 ))}
                             </div>
                         ) : searchLoading ? (
-                            // Search in progress - show shimmer/spinner
+
                             <div className="flex flex-col items-center justify-center py-16 gap-3">
                                 <div className="w-10 h-10 border-4 border-[#4318FF] border-t-transparent rounded-full animate-spin"></div>
                                 <p className="text-sm text-[#A3AED0]">Searching journals...</p>
                             </div>
                         ) : searchResults !== null ? (
-                            // Search done - show results
+
                             searchResults.length === 0 ? (
                                 <div className="bg-white p-6 rounded-2xl text-center text-[#A3AED0]">
                                     <p>No journals found for "<span className="font-medium text-[#4318FF]">{searchQuery}</span>"</p>
@@ -302,7 +303,6 @@ const Dashboard = () => {
                                 ))
                             )
                         ) : (
-                            // Normal journals (no search)
                             journals.length === 0 ? (
                                 <div className="bg-white p-6 rounded-2xl text-center text-[#A3AED0]">
                                     <p>No journals found.</p>

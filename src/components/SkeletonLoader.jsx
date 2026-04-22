@@ -33,7 +33,7 @@ export const CardSkeleton = () => {
 export const DashboardSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-[290px] bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
+            <div className="hidden md:block w-72.5 bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
                 <div className="p-6 mt-10">
                     <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
                     <div className="space-y-6">
@@ -81,7 +81,7 @@ export const DashboardSkeleton = () => {
 export const FormSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-[290px] bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
+            <div className="hidden md:block w-72.5-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
                 <div className="p-6 mt-10">
                     <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
                     <div className="space-y-6">
@@ -138,7 +138,7 @@ export const FormSkeleton = () => {
 export const ViewSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-[290px] bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
+            <div className="hidden md:block w-72.5 bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
                 <div className="p-6 mt-10">
                     <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
                     <div className="space-y-6">
@@ -161,7 +161,7 @@ export const ViewSkeleton = () => {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-8 border border-gray-100 h-[500px]">
+                <div className="bg-white rounded-2xl p-8 border border-gray-100 h-125">
                 </div>
             </div>
         </div>
