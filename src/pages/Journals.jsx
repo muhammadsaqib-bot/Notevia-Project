@@ -22,7 +22,7 @@ const Journals = () => {
     const [journals, setJournals] = useState([]);
     const [journalsLoading, setJournalsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState(null); // null = no search active
+    const [searchResults, setSearchResults] = useState(null);
     const [searchLoading, setSearchLoading] = useState(false);
     const navigate = useNavigate();
     const debounceTimer = useRef(null);
@@ -42,6 +42,8 @@ const Journals = () => {
     };
 
     useEffect(() => {
+        if (isVerifying) return;
+
         const fetchJournals = async () => {
             const token = localStorage.getItem('token');
             if (!token) return;
@@ -55,12 +57,8 @@ const Journals = () => {
                 const list = response.data.data || [];
                 setJournals(list);
             } catch (err) {
-                if (err.response?.status === 401) {
-                    showToast("Session expired. Please login again.");
-                    setTimeout(() => {
-                        localStorage.removeItem("token");
-                        navigate("/SignIn");
-                    }, 1500);
+                if (err.response?.status === 401 || err.response?.status === 423) {
+                    navigate("/ConfirmPin");
                     return;
                 }
                 showToast("Failed to load data. Please refresh.");
@@ -70,9 +68,8 @@ const Journals = () => {
         };
 
         fetchJournals();
-    }, [navigate]);
+    }, [isVerifying, navigate]);
 
-    // Debounce search - 2 second wait
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchQuery(value);
@@ -80,12 +77,11 @@ const Journals = () => {
         if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
         if (!value.trim()) {
-            setSearchResults(null); // reset to normal journals
+            setSearchResults(null);
             setSearchLoading(false);
             return;
         }
 
-        // Show loader immediately
         setSearchLoading(true);
 
         debounceTimer.current = setTimeout(async () => {
@@ -99,6 +95,10 @@ const Journals = () => {
 
                 setSearchResults(res.data.data || []);
             } catch (err) {
+                if (err.response?.status === 401 || err.response?.status === 423) {
+                    navigate("/ConfirmPin");
+                    return;
+                }
                 showToast("Search failed. Try again.");
                 setSearchResults([]);
             } finally {
@@ -107,14 +107,12 @@ const Journals = () => {
         }, 2000);
     };
 
-    // Date & mood filter — only apply on normal journals (when no search)
     const filteredJournals = journals.filter((j) => {
         const matchesDate = date ? j.journal_date?.startsWith(date) : true;
         const matchesMood = selectedMood !== "All Mood" ? j.mood === selectedMood : true;
         return matchesDate && matchesMood;
     });
 
-    // What to show in the grid
     const displayList = searchResults !== null ? searchResults : filteredJournals;
 
     if (isVerifying) {
@@ -162,7 +160,7 @@ const Journals = () => {
                                 placeholder="Search"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="outline-none text-sm w-full h-[36px]"
+                                className="outline-none text-sm w-full h-9"
                             />
                             {searchLoading && (
                                 <div className="w-4 h-4 border-2 border-[#4318FF] border-t-transparent rounded-full animate-spin shrink-0"></div>

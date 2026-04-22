@@ -15,11 +15,10 @@ const AddJournal = () => {
     const Journal_data = location.state;
 
     const token = localStorage.getItem('token');
-
-
-
     const { name, profilePic, isVerifying } = useAuth();
     const navigate = useNavigate();
+
+
     const [selectedMood, setSelectedMood] = useState(Journal_data?.mood || "Calm");
     const [title, setTitle] = useState(Journal_data?.title || "");
 
@@ -94,12 +93,8 @@ const AddJournal = () => {
             }, 1500);
 
         } catch (err) {
-            if (err.response?.status === 401) {
-                showToast("Session expired. Please login again.");
-                setTimeout(() => {
-                    localStorage.removeItem("token");
-                    navigate("/SignIn");
-                }, 1500);
+            if (err.response?.status === 401 || err.response?.status === 423) {
+                navigate("/ConfirmPin");
                 return;
             }
             const msg = err.response?.data?.message || "Failed to save journal. Please try again.";
@@ -133,7 +128,11 @@ const AddJournal = () => {
             })
             showToast("Journal updated successfully!");
             setTimeout(() => navigate("/Journals"), 1500);
-        } catch (error) {
+        } catch (err) {
+            if (err.response?.status === 401 || err.response?.status === 423) {
+                navigate("/ConfirmPin");
+                return;
+            }
             console.log("Error : ", error)
             showToast("Failed to update journal.");
         }

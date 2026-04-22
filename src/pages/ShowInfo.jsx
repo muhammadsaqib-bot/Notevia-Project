@@ -3,6 +3,8 @@ import happyEmoji from '../assets/emoji.png';
 import sadEmoji from '../assets/sad.png';
 import neutralEmoji from '../assets/neutral.png';
 import Sidebar from "../components/Sidebar";
+import useAuth from "../hooks/useAuth";
+import { ViewSkeleton } from "../components/SkeletonLoader";
 
 const moodConfig = {
     Happy: { emoji: happyEmoji, color: "#4318FF", bg: "#E9E6FF", label: "Happy" },
@@ -14,6 +16,7 @@ const moodConfig = {
 const ShowInfo = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
+    const { isVerifying } = useAuth();
 
     const { title, content, date, mood, tags, journalId, media } = state || {};
     const moodInfo = moodConfig[mood] || moodConfig["Neutral"];
@@ -21,6 +24,10 @@ const ShowInfo = () => {
     const handlePrint = () => {
         window.print();
     };
+
+    if (isVerifying) {
+        return <ViewSkeleton />;
+    }
 
     return (
         <>
