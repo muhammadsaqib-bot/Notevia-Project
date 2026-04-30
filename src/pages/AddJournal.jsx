@@ -161,7 +161,7 @@ const AddJournal = () => {
                         <p className="text-sm text-[#A3AED0]">Hi {name},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#1B2559]">Welcome to Notevia!</h1>
                     </div>
-                    <div className="bg-white p-1 rounded">
+                    <div className="bg-white p-1 rounded-full">
                         <img
                             src={profilePic || "https://via.placeholder.com/150"}
                             alt="Profile"

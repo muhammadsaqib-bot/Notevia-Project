@@ -312,7 +312,7 @@ const Profile = () => {
                         <p className="text-sm text-[#A3AED0]">Hi {displayName.split(' ')[0] || 'User'},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3674]">Welcome to Notevia!</h1>
                     </div>
-                    <div className="bg-white p-1 rounded">
+                    <div className="bg-white p-1 rounded-full">
                         <img
                             src={previewPic || "https://via.placeholder.com/150"}
                             alt="Profile"

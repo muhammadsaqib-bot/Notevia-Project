@@ -93,18 +93,18 @@ const Setting = () => {
                         <p className="text-sm text-[#A3AED0]">Hi {name.split(' ')[0] || 'User'},</p>
                         <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3674]">Settings</h1>
                     </div>
-                    <div className="bg-white p-1 rounded">
+                    <div className="bg-white p-1 rounded-full">
                         <img
                             src={profilePic || "https://via.placeholder.com/150"}
                             alt="Profile"
-                            className="border border-[gray] p-1 w-12 h-12 rounded-full object-cover"
+                            className="border p-1 w-12 h-12 rounded-full object-cover"
                         />
                     </div>
                 </div>
 
                 <div
                     className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 overflow-hidden transition-all duration-300 ease-out"
-                    style={{ maxHeight: showLockModal ? 780 : 170 }}
+                    style={{ maxHeight: showLockModal ? 780 : "auto" }}
                 >
                     {showLockModal ? (
                         <div className="space-y-8">
@@ -175,6 +175,7 @@ const Setting = () => {
                                     </button>
                                 </div>
                             </div>
+                            <h2 className='text-xs text-[#A3AED0] text-center '>New features will be added after some time.</h2>
                         </div>
                     )}
                 </div>
