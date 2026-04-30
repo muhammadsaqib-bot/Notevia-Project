@@ -5,6 +5,7 @@ import dashboard1 from "../assets/dashboardIcon.png";
 import journalIcon from "../assets/journalIcon.png";
 import penIcon from "../assets/penIcon.png";
 import profileIcon from "../assets/profileIcon.png";
+import settingIcon from "../assets/settingIcon.png";
 
 const Sidebar = ({ activePage = "" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,19 +39,26 @@ const Sidebar = ({ activePage = "" }) => {
             iconClass: "h-[20px]",
             key: "profile",
         },
+        {
+            label: "Settings",
+            to: "/Setting",
+            icon: settingIcon,
+            iconClass: "h-[20px]",
+            key: "setting",
+        },
     ];
 
     return (
         <div
-            className={`w-full md:w-[290px] md:h-screen md:fixed top-0 left-0 bg-white px-[20px] shadow-sm shrink-0 z-50 transition-all duration-300 
-            ${isMenuOpen ? "h-auto pb-5" : "h-[80px] overflow-hidden md:h-screen md:overflow-visible"}`}
+            className={`w-full md:w-72.5 md:h-screen md:fixed top-0 left-0 bg-white px-5 shadow-sm shrink-0 z-50 transition-all duration-300 
+            ${isMenuOpen ? "h-auto pb-5" : "h-20 overflow-hidden md:h-screen md:overflow-visible"}`}
         >
-            <div className="flex gap-5 mt-6 md:mt-[55px] mb-5 items-center justify-between md:justify-center w-full h-[45px] rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10">
-                <div className="flex items-center gap-4 pr-[35px]">
+            <div className="flex gap-5 mt-6 md:mt-13.75 mb-5 items-center justify-between md:justify-center w-full h-11.25 rounded-[5px] md:border-b border-[#E6EDFF] md:pb-10">
+                <div className="flex items-center gap-4 pr-8.75">
                     <Link to="/Notevia" className="cursor-pointer">
                         <img src={noteviaLogo} alt="Notevia Logo" />
                     </Link>
-                    <h2 className="font-[800] text-[26px] leading-[120%] text-center text-[#1B2559]">
+                    <h2 className="font-extrabold text-[26px] leading-[120%] text-center text-[#1B2559]">
                         NOTEVIA
                     </h2>
                 </div>
@@ -76,12 +84,12 @@ const Sidebar = ({ activePage = "" }) => {
                     <Link
                         key={item.key}
                         to={item.to}
-                        className={`rounded cursor-pointer h-[45px] w-full flex pl-7 mb-5 items-center
+                        className={`rounded cursor-pointer h-11.25 w-full flex pl-7 mb-5 items-center
                             ${isActive ? "bg-[#4318FF]" : "hover:bg-[#F4F7FE]"}`}
                     >
                         <div className="flex items-center gap-3">
                             <img className={item.iconClass} src={item.icon} alt={item.label} />
-                            <p className={`font-[500] text-[16px] leading-[28px] ${isActive ? "text-white" : "text-[#A3AED0]"}`}>
+                            <p className={`font-medium text-[16px] leading-7 ${isActive ? "text-white" : "text-[#A3AED0]"}`}>
                                 {item.label}
                             </p>
                         </div>

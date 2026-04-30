@@ -11,7 +11,7 @@ import Sidebar from '../components/Sidebar';
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CardSkeleton, DashboardSkeleton } from "../components/SkeletonLoader";
+import { CardSkeleton, JournalsSkeleton } from "../components/SkeletonLoader";
 
 const Journals = () => {
     const { name, profilePic, isVerifying } = useAuth();
@@ -117,7 +117,12 @@ const Journals = () => {
 
     if (isVerifying) {
         return (
-            <DashboardSkeleton />
+            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
+                <Sidebar activePage="journals" />
+                <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
+                    <JournalsSkeleton />
+                </div>
+            </div>
         );
     }
 

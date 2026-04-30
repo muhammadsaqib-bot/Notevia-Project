@@ -40,15 +40,22 @@ const AddJournal = () => {
         setTimeout(() => setToastOpen(false), 2000);
     };
 
-    if (isVerifying) {
-        return (
-            <FormSkeleton />
-        );
-    }
+
 
     const handleCancel = () => {
         navigate("/Dashboard1");
     };
+
+    if (isVerifying) {
+        return (
+            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
+                <Sidebar activePage="addjournal" />
+                <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
+                    <FormSkeleton />
+                </div>
+            </div>
+        );
+    }
 
     const handleSave = async () => {
         if (!title.trim()) {

@@ -127,7 +127,12 @@ const NoteviApp = () => {
 
   if (authVerifying || (loading && !journalId)) {
     return (
-      <ViewSkeleton />
+      <div className='max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row'>
+        <Sidebar activePage="notevia" />
+        <div className='md:ml-72.5 flex-1 p-4 md:p-8 overflow-x-hidden'>
+          <ViewSkeleton />
+        </div>
+      </div>
     );
   }
 

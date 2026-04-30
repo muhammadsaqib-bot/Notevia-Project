@@ -22,9 +22,6 @@ const Profile = () => {
     const [toastOpen, setToastOpen] = useState(false);
 
     const [showPasswordModal, setShowPasswordModal] = useState(false);
-    const [showLockModal, setShowLockModal] = useState(false);
-    const [lockTimeout, setLockTimeout] = useState("off");
-
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,14 +43,6 @@ const Profile = () => {
             }
 
             try {
-
-                const lockRes = await axios.get(`${API_BASE_URL}lock/preferences`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                if (lockRes.data?.preferences) {
-                    setLockTimeout(lockRes.data.preferences);
-                }
-
 
                 const response = await axios.get(`${API_BASE_URL}profiles/me`, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -225,23 +214,6 @@ const Profile = () => {
         setConfirmPassword("");
     };
 
-    const handleSetLock = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        try {
-            await axios.put(`${API_BASE_URL}lock/preferences`, {
-                "preferences": lockTimeout
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            showToast("Lock preferences updated!");
-            setShowLockModal(false);
-        } catch (err) {
-            showToast(err.response?.data?.message || "Failed to set lock preferences.");
-        }
-    };
-
     const handleLogout = () => {
         localStorage.removeItem("token");
         showToast("Logged out successfully");
@@ -250,7 +222,12 @@ const Profile = () => {
 
     if (isVerifying) {
         return (
-            <FormSkeleton />
+            <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
+                <Sidebar activePage="profile" />
+                <div className="md:ml-72.5 flex-1 p-4 md:p-8 overflow-y-auto">
+                    <FormSkeleton />
+                </div>
+            </div>
         );
     }
 
@@ -323,55 +300,6 @@ const Profile = () => {
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
-
-            {showLockModal && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center bg-[#0b14374d] backdrop-blur-sm">
-                    <form
-                        onSubmit={(e) => e.preventDefault()}
-                        className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md mx-4 animate-in fade-in zoom-in duration-200"
-                    >
-                        <h3 className="text-2xl font-bold text-[#1B2559] text-center mb-6">Lock Timeout</h3>
-
-                        <div className="flex flex-col gap-3 mb-8">
-                            {[
-                                { label: "1 min", value: "1 min" },
-                                { label: "5 min", value: "5 min" },
-                                { label: "10 min", value: "10 min" },
-                                { label: "30 min", value: "30 min" },
-                                { label: "off", value: "off" }
-                            ].map((option) => (
-                                <label key={option.value} className="flex items-center justify-between p-4 bg-[#F4F7FE] rounded-2xl cursor-pointer hover:bg-[#EEF2FF] transition-colors border border-[#E6EDFF]">
-                                    <span className="text-sm font-medium text-[#1B2559]">{option.label}</span>
-                                    <input
-                                        type="radio"
-                                        name="lockTimeout"
-                                        value={option.value}
-                                        checked={lockTimeout === option.value}
-                                        onChange={(e) => setLockTimeout(e.target.value)}
-                                        className="w-5 h-5 accent-[#4318FF] cursor-pointer"
-                                    />
-                                </label>
-                            ))}
-                        </div>
-
-                        <div className="flex gap-4">
-                            <button
-                                type="button"
-                                onClick={() => setShowLockModal(false)}
-                                className="flex-1 h-12 rounded-full border border-[#E6EDFF] text-[#A3AED0] font-semibold hover:bg-[#F4F7FE] transition-colors cursor-pointer"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSetLock}
-                                className="flex-1 h-12 rounded-full bg-[#4318FF] text-white font-semibold shadow-lg shadow-[#4318ff33] hover:bg-[#3311DD] transition-all cursor-pointer"
-                            >
-                                Set Lock
-                            </button>
-                        </div>
-                    </form>
                 </div>
             )}
 
@@ -471,13 +399,6 @@ const Profile = () => {
                             className="w-full min-[768px]:w-43.5 h-12.5 rounded-full border border-red-300 bg-[#F5E1E7] text-[16px] font-medium hover:bg-red-50 transition-colors cursor-pointer text-[#FF1818]"
                         >
                             Logout
-                        </button>
-
-                        <button
-                            onClick={() => setShowLockModal(true)}
-                            className="w-full min-[768px]:w-53.25 h-12.5 rounded-full border border-[#E6EDFF] text-[#4318FF] text-sm font-medium hover:bg-[#F4F7FE] transition-colors cursor-pointer bg-[#4318FF1A] flex justify-center items-center gap-4"
-                        >
-                            Lock
                         </button>
 
                         <button

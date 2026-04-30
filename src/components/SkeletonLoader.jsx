@@ -33,18 +33,7 @@ export const CardSkeleton = () => {
 export const DashboardSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-72.5 bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
-                <div className="p-6 mt-10">
-                    <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
-                    <div className="space-y-6">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="h-10 bg-gray-200 rounded w-full"></div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="md:ml-72.5 flex-1 p-4 md:p-8 w-full">
+            <div className="flex-1 p-4 md:p-8 w-full">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 animate-pulse gap-4">
                     <div>
                         <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
@@ -78,21 +67,45 @@ export const DashboardSkeleton = () => {
     )
 }
 
+export const JournalsSkeleton = () => {
+    return (
+        <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
+            <div className="flex-1 p-4 md:p-8 w-full">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8 animate-pulse">
+                    <div className="w-full lg:w-1/2">
+                        <div className="h-4 bg-gray-200 rounded w-32 mb-3"></div>
+                        <div className="h-6 bg-gray-200 rounded w-48"></div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                        <div className="h-12 bg-gray-200 rounded w-full sm:w-40"></div>
+                        <div className="h-12 bg-gray-200 rounded w-full sm:w-32"></div>
+                    </div>
+                </div>
+
+                <div className="grid gap-6">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-pulse">
+                            <div className="flex flex-col gap-4">
+                                <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+                                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                                <div className="flex gap-3 mt-4">
+                                    <div className="h-8 w-16 bg-gray-200 rounded-full"></div>
+                                    <div className="h-8 w-16 bg-gray-200 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export const FormSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-72.5-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
-                <div className="p-6 mt-10">
-                    <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
-                    <div className="space-y-6">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="h-10 bg-gray-200 rounded w-full"></div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="md:ml-72.5 flex-1 p-4 md:p-8 w-full animate-pulse">
+            <div className="flex-1 p-4 md:p-8 w-full animate-pulse">
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
@@ -138,18 +151,7 @@ export const FormSkeleton = () => {
 export const ViewSkeleton = () => {
     return (
         <div className="max-w-full min-h-screen bg-[#F4F7FE] flex flex-col md:flex-row">
-            <div className="hidden md:block w-72.5 bg-white h-screen fixed left-0 top-0 border-r border-gray-100 z-50">
-                <div className="p-6 mt-10">
-                    <div className="h-8 bg-gray-200 rounded w-32 mb-10 mx-auto"></div>
-                    <div className="space-y-6">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="h-10 bg-gray-200 rounded w-full"></div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="md:ml-72.5 flex-1 p-4 md:p-8 w-full animate-pulse">
+            <div className="flex-1 p-4 md:p-8 w-full animate-pulse">
                 <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
                 <div className="h-8 bg-gray-200 rounded w-64 mb-8"></div>
 
